@@ -1,6 +1,8 @@
-ncpu: 30
+ncpu: 10
 min_taxa: 200
 max_taxa: 400
+fin_min_taxa: 800
+fin_max_taxa: 3000
 min_support: 0.7
 cd_hit_perc_id: 0.80
 samplefile: "NOGtarget.tsv"
