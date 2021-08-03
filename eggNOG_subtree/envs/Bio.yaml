@@ -20,6 +20,7 @@ dependencies:
   - gstreamer=1.14.0=h28cd5cc_2
   - icu=58.2=he6710b0_3
   - intel-openmp=2021.2.0=h06a4308_610
+  - joblib=1.0.1=pyhd3eb1b0_0
   - jpeg=9b=h024ee3a_2
   - ld_impl_linux-64=2.35.1=h7274673_9
   - libffi=3.3=he6710b0_2
