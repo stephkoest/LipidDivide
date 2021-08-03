@@ -1,0 +1,408 @@
+from os.path import join
+configfile: "config/config.yaml"
+#there is some ambigouity between rule cd_hit_homologs_step2 and cd_hit_step1... resolve once I get it
+ruleorder: cd_hit_homologs_step2 > cd_hit_step1 
+ncpu=config["ncpu"]
+cd_hit_identity = str(int(config["cd_hit_perc_id"]* 100) )
+conserved_residues = str(int(config["conserved_residues"] * 100))
+samples_dict={}
+
+with open(config["samplefile"], 'r') as f:
+	for l in f:
+		samplelist = l.rstrip("\n").split("\t")
+		if len(samplelist) > 1:
+			samples_dict[samplelist[0]] = samplelist[1]
+
+samples = [key for key in samples_dict.keys()]
+for sample in samples:
+	open("results/"+ sample + ".run", 'a').close()
+
+rule all:
+	input:
+		expand(join(config["NOGdir"] + "/{sample}.faa"), sample=samples),
+		expand(join("results/{sample}." + cd_hit_identity + ".trim." + conserved_residues + ".noLong.focalclade.homologs.selected.trim." + conserved_residues + ".fasttree.pdf"), sample=samples)
+		
+
+rule downloadNOGs:
+	input: 
+		lookup=config["eggnoglookupfile"],
+		runfile=expand(join("results/{sample}.run"), sample=samples)
+	output: 
+		config["NOGdir"] + "/{sample}.faa"
+	params:
+		"{sample}"
+	conda:
+		"envs/Bio.yaml"
+	shell:
+		"bash bin/getNOG.sh {params} {input.lookup} {output}"
+
+rule cd_hit_step1:
+	input: config["NOGdir"] + "/{sample}.faa"
+	output: "results/{sample}." + cd_hit_identity + ".faa"
+	params: config["cd_hit_perc_id"]
+	shell:
+		"cd-hit -i {input} -o {output} -c {params} -M 8000"
+
+rule mafft_step1:
+	input: "results/{sample}." + cd_hit_identity + ".faa"
+	output: "results/{sample}." + cd_hit_identity + ".aln"
+	threads: ncpu
+	shell:
+		"mafft --anysymbol --thread {threads} --auto {input} > {output}"
+
+rule trimal_step1:
+	input: "results/{sample}." + cd_hit_identity + ".aln"
+	output: "results/{sample}." + cd_hit_identity + ".trim.aln"
+	shell:
+		"trimal -in {input} -out {output} -gappyout"
+
+rule conserved_trim_step1:
+	input: "results/{sample}." + cd_hit_identity + ".trim.aln"
+	output: "results/{sample}." + cd_hit_identity + ".trim." + conserved_residues + ".aln"
+	params: config["conserved_residues"]
+	conda: "envs/Bio.yaml"
+	shell:
+		"python bin/filter_shortSeqs_MSA.py {input} {params} > {output}"
+
+rule fasttree_step1:
+	input: "results/{sample}." + cd_hit_identity + ".trim." + conserved_residues + ".aln"
+	output: "results/{sample}." + cd_hit_identity + ".trim." + conserved_residues + ".fasttree.tre"
+	log: "results/{sample}." + cd_hit_identity + ".trim." + conserved_residues + ".fasttree.log"
+	shell:
+		"FastTree -log {log} {input} > {output}"
+
+rule parse_eggnog_taxonomy_step1:
+	input: "results/{sample}." + cd_hit_identity + ".trim." + conserved_residues + ".fasttree.tre"
+	output: "results/{sample}." + cd_hit_identity + ".trim." + conserved_residues + ".names.txt"
+	log: "results/{sample}." + cd_hit_identity + ".trim." + conserved_residues + ".names.log"
+	conda: "envs/Bio.yaml"
+	shell:
+		"python bin/parseEggnogTaxonomy.py {input} {output} 2> {log}"
+
+rule plot_tree_step1:
+	input: 
+		tree="results/{sample}." + cd_hit_identity + ".trim." + conserved_residues + ".fasttree.tre",
+		names="results/{sample}." + cd_hit_identity + ".trim." + conserved_residues + ".names.txt"
+	output: "results/{sample}." + cd_hit_identity + ".trim." + conserved_residues + ".fasttree.pdf"
+	conda: "envs/Bio.yaml"
+	shell:
+		"python bin/plotLargeTree.py {input.tree} {output} {input.names}"
+
+rule shrink_tree_step1:
+	input: 
+		tree="results/{sample}." + cd_hit_identity + ".trim." + conserved_residues + ".fasttree.tre",
+		fasta="results/{sample}." + cd_hit_identity + ".trim." + conserved_residues + ".aln"
+	output: 
+		txt="results/{sample}." + cd_hit_identity + ".trim." + conserved_residues + ".fasttree.shrink.txt",
+		fasta="results/{sample}." + cd_hit_identity + ".trim." + conserved_residues + ".noLong.aln"
+	conda: "envs/treeshrink.yaml"
+	params: config["treeshrink_q"]
+	shell:
+		"""		
+		run_treeshrink.py -t {input.tree} --mode per-gene -O $(echo {output.txt} | sed 's/\.txt//') --outdir . -f -c -q {params}
+		seqmagick convert --exclude-from-file <(sed 's/\\t/\\n/g' {output.txt}) --input-format fasta --output-format fasta {input.fasta} {output.fasta}
+		"""
+
+rule fasttree_noLong_step1:
+	input: "results/{sample}." + cd_hit_identity + ".trim." + conserved_residues + ".noLong.aln"
+	output: "results/{sample}." + cd_hit_identity + ".trim." + conserved_residues + ".fasttree.noLong.tre"
+	log: "results/{sample}." + cd_hit_identity + ".trim." + conserved_residues + ".fasttree.noLong.log"
+	shell:
+		"FastTree -log {log} {input} > {output}"
+
+rule plot_tree_noLong_step1:
+	input: 
+		tree="results/{sample}." + cd_hit_identity + ".trim." + conserved_residues + ".fasttree.noLong.tre",
+		names="results/{sample}." + cd_hit_identity + ".trim." + conserved_residues + ".names.txt",
+		lastpdf="results/{sample}." + cd_hit_identity + ".trim." + conserved_residues + ".fasttree.pdf"
+	output: "results/{sample}." + cd_hit_identity + ".trim." + conserved_residues + ".fasttree.noLong.pdf"
+	conda: "envs/Bio.yaml"
+	shell:
+		"python bin/plotLargeTree.py {input.tree} {output} {input.names}"
+
+rule extract_focal_clade_step2:
+	input: 
+		tree="results/{sample}." + cd_hit_identity + ".trim." + conserved_residues + ".fasttree.noLong.tre",
+		lastpdf="results/{sample}." + cd_hit_identity + ".trim." + conserved_residues + ".fasttree.noLong.pdf",
+		fasta="results/{sample}." + cd_hit_identity + ".faa"
+	output: 
+		focal="results/{sample}." + cd_hit_identity + ".trim." + conserved_residues + ".fasttree.noLong.focalclade.txt",
+		outgroup="results/{sample}." + cd_hit_identity + ".trim." + conserved_residues + ".fasttree.noLong.outgroup.txt",
+		focal_fasta="results/{sample}." + cd_hit_identity + ".focalclade.faa",
+		outgroup_fasta="results/{sample}." + cd_hit_identity + ".outgroup.faa"
+	conda: "envs/Bio.yaml"
+	params: 
+		min_taxa = config["min_taxa"],
+		max_taxa = config["max_taxa"],
+		min_support = config["min_support"],
+		target = lambda wcs: samples_dict[wcs.sample]
+	shell:
+		"""
+		## ugly fix for handling 
+		python bin/extractFocalTree.py {input.tree} {params.target} {output.focal} {output.outgroup} {params.min_support} {params.min_taxa} {params.max_taxa} || python bin/extractFocalTree.py {input.tree} {params.target} {output.focal} {output.outgroup} {params.min_support} $(expr {params.min_taxa} / 4) {params.max_taxa} 
+		python bin/fastaGrep.py {output.focal} {input.fasta} > {output.focal_fasta}
+		python bin/fastaGrep.py {output.outgroup} {input.fasta} > {output.outgroup_fasta}
+		"""
+
+rule blast_focal_step2:
+	input: "results/{sample}." + cd_hit_identity + ".focalclade.faa"
+	output: "results/{sample}." + cd_hit_identity + ".focalclade.blastp"
+	threads: ncpu
+	log: "results/{sample}." + cd_hit_identity + ".focalclade.blastp.log"
+	params: 
+		diamond_db = config["diamond_db"],
+		n_blast_targets = config["n_blast_targets"]
+	shell:
+		"""
+		#--index-chunks 1 for high memory useage, increase if too ressource intense (default=4)
+		diamond blastp \
+		--threads {threads} \
+		--db {params.diamond_db} \
+		--out {output} \
+		--outfmt 6 qseqid qlen sseqid slen stitle length qcovhsp pident evalue bitscore \
+		--query {input} \
+		--max-target-seqs {params.n_blast_targets} \
+		--evalue 0.00001 \
+		--index-chunks 1 \
+		--more-sensitive > {log}
+		"""
+
+rule collect_homologs_step2:
+	input:
+		"results/{sample}." + cd_hit_identity + ".focalclade.blastp"
+	output:
+		txt="results/{sample}." + cd_hit_identity + ".focalclade.homologs.txt",
+		fasta="results/{sample}." + cd_hit_identity + ".focalclade.homologs.faa"
+	params:
+		nr_db_fasta = config["nr_db_fasta"]
+	shell:
+		"""
+		cut -f3 {input} | sort -u > {output.txt}
+		seqtk subseq <(zcat {params.nr_db_fasta}) {output.txt} > {output.fasta}
+		"""
+
+rule cd_hit_homologs_step2:
+	input:
+		"results/{sample}." + cd_hit_identity + ".focalclade.homologs.faa"
+	output:
+		"results/{sample}." + cd_hit_identity + ".focalclade.homologs." + cd_hit_identity + ".faa"
+	params:
+		config["cd_hit_perc_id"]
+	shell:
+		"cd-hit -i {input} -o {output} -c {params} -M 8000"
+
+rule parse_nr_taxonomy:
+	input:
+		"results/{sample}." + cd_hit_identity + ".focalclade.homologs." + cd_hit_identity + ".faa"
+	output: 
+		txt="results/{sample}." + cd_hit_identity + ".focalclade.homologs." + cd_hit_identity + ".txt",
+		taxonomy="results/{sample}." + cd_hit_identity + ".focalclade.homologs." + cd_hit_identity + ".taxonomy.txt",
+		no_taxonomy="results/{sample}." + cd_hit_identity + ".focalclade.homologs." + cd_hit_identity + ".notaxonomy.txt"
+	params:
+		nr_blast_db = config["nr_blast_db"]
+	shell:
+		"""
+		grep '>' {input} | sed 's/>//' | sed 's/ .*//' >  {output.txt}
+		blastdbcmd -db {params.nr_blast_db} \
+		-dbtype prot \
+		-target_only \
+		-outfmt '%a\t%T.NCBI|%a' \
+		-entry_batch {output.txt} 2> {output.no_taxonomy} > {output.taxonomy} || true
+		"""
+
+rule rename_fasta_step2:
+	input:
+		fasta="results/{sample}." + cd_hit_identity + ".focalclade.homologs." + cd_hit_identity + ".faa",
+		taxonomy="results/{sample}." + cd_hit_identity + ".focalclade.homologs." + cd_hit_identity + ".taxonomy.txt",
+		no_taxonomy="results/{sample}." + cd_hit_identity + ".focalclade.homologs." + cd_hit_identity + ".notaxonomy.txt"
+	output: 
+		fasta="results/{sample}." + cd_hit_identity + ".focalclade.homologs." + cd_hit_identity + ".rename.faa",
+		txt="results/{sample}." + cd_hit_identity + ".focalclade.homologs." + cd_hit_identity + ".rename.txt"
+	params:
+		config["cd_hit_perc_id"]
+	conda: "envs/Bio.yaml"
+	shell:
+		"""	
+		sed 's/ /\t/' {input.taxonomy} > {output.txt}
+		rev {input.no_taxonomy} | sed 's/ .*//' | rev | awk '{{print $1"\tNCBI|"$1}}' >>  {output.txt}
+		python bin/renameFasta.py {output.txt} <(sed '/^>/ s/ .*//' {input.fasta}) > {output.fasta}
+		"""
+
+rule mafft_add_step3:
+	input: 
+		addfasta="results/{sample}." + cd_hit_identity + ".focalclade.homologs." + cd_hit_identity + ".rename.faa",
+		ali="results/{sample}." + cd_hit_identity + ".trim." + conserved_residues + ".noLong.aln",
+		tree="results/{sample}." + cd_hit_identity + ".trim." + conserved_residues + ".fasttree.noLong.tre"
+	output: 
+		"results/{sample}." + cd_hit_identity + ".trim." + conserved_residues + ".noLong.focalclade.homologs.aln"
+	threads:
+		ncpu
+	conda:
+		"envs/Bio.yaml"
+	shell:
+		"""
+		NSEQ=$(grep -c ">" {input.addfasta})
+		if [[ "$NSEQ" -gt 50000 ]]
+		then
+			mafft --add {input.addfasta} --keeplength --anysymbol --thread {threads} --large --globalpair {input.ali} > {output}
+		else
+			mafft --add {input.addfasta} --keeplength --anysymbol --thread {threads} --auto {input.ali} > {output}
+		fi
+		seqmagick mogrify --deduplicate-sequences --input-format fasta --output-format fasta {output}
+		"""
+
+rule conserved_trim_step3:
+	input:
+		"results/{sample}." + cd_hit_identity + ".trim." + conserved_residues + ".noLong.focalclade.homologs.aln"
+	output:
+		"results/{sample}." + cd_hit_identity + ".trim." + conserved_residues + ".noLong.focalclade.homologs.filter.aln"
+	params:
+		config["conserved_residues"]
+	conda: "envs/Bio.yaml"
+	shell:
+		"python bin/filter_shortSeqs_MSA.py {input} {params} > {output}"
+
+rule fasttree_step3:
+	input:
+		"results/{sample}." + cd_hit_identity + ".trim." + conserved_residues + ".noLong.focalclade.homologs.filter.aln"
+	output:
+		"results/{sample}." + cd_hit_identity + ".trim." + conserved_residues + ".noLong.focalclade.homologs.filter.fasttree.tre"
+	log:
+		"results/{sample}." + cd_hit_identity + ".trim." + conserved_residues + ".noLong.focalclade.homologs.filter.fasttree.log"
+	shell:
+		"FastTree -log {log} {input} > {output}"
+
+rule parse_eggnog_taxonomy_step3:
+	input:
+		"results/{sample}." + cd_hit_identity + ".trim." + conserved_residues + ".noLong.focalclade.homologs.filter.fasttree.tre"
+	output: 
+		"results/{sample}." + cd_hit_identity + ".trim." + conserved_residues + ".noLong.focalclade.homologs.filter.names.txt"
+	log:
+		"results/{sample}." + cd_hit_identity + ".trim." + conserved_residues + ".names.log"
+	conda:
+		"envs/Bio.yaml"
+	shell:
+		"python bin/parseEggnogTaxonomy.py {input} {output} 2> {log}"
+
+rule plot_tree_step3:
+	input: 
+		tree="results/{sample}." + cd_hit_identity + ".trim." + conserved_residues + ".noLong.focalclade.homologs.filter.fasttree.tre",
+		names="results/{sample}." + cd_hit_identity + ".trim." + conserved_residues + ".noLong.focalclade.homologs.filter.names.txt"
+	output: "results/{sample}." + cd_hit_identity + ".trim." + conserved_residues + ".noLong.focalclade.homologs.filter.fasttree.pdf"
+	conda: "envs/Bio.yaml"
+	shell:
+		"python bin/plotLargeTree.py {input.tree} {output} {input.names}"
+
+rule shrink_tree_step3:
+	input: 
+		tree="results/{sample}." + cd_hit_identity + ".trim." + conserved_residues + ".noLong.focalclade.homologs.filter.fasttree.tre",
+		fasta="results/{sample}." + cd_hit_identity + ".trim." + conserved_residues + ".noLong.focalclade.homologs.filter.aln"
+	output: 
+		txt="results/{sample}." + cd_hit_identity + ".trim." + conserved_residues + ".noLong.focalclade.homologs.filter.fasttree.shrink.txt",
+		fasta="results/{sample}." + cd_hit_identity + ".trim." + conserved_residues + ".noLong.focalclade.homologs.filter.noLong.aln"
+	conda: "envs/treeshrink.yaml"
+	params: config["treeshrink_q"]
+	shell:
+		"""		
+		run_treeshrink.py -t {input.tree} --mode per-gene -O $(echo {output.txt} | sed 's/\.txt//') --outdir . -f -c -q {params}
+		seqmagick convert --exclude-from-file <(sed 's/\\t/\\n/g' {output.txt}) --input-format fasta --output-format fasta {input.fasta} {output.fasta}
+		"""
+
+rule fasttree_noLong_step3:
+	input:
+		"results/{sample}." + cd_hit_identity + ".trim." + conserved_residues + ".noLong.focalclade.homologs.filter.noLong.aln"
+	output:
+		"results/{sample}." + cd_hit_identity + ".trim." + conserved_residues + ".noLong.focalclade.homologs.filter.noLong.fasttree.tre"
+	log:
+		"results/{sample}." + cd_hit_identity + ".trim." + conserved_residues + ".noLong.focalclade.homologs.filter.noLong.fasttree.log"
+	shell:
+		"FastTree -log {log} {input} > {output}"
+
+rule plot_tree_noLong_step3:
+	input: 
+		tree="results/{sample}." + cd_hit_identity + ".trim." + conserved_residues + ".noLong.focalclade.homologs.filter.noLong.fasttree.tre",
+		names="results/{sample}." + cd_hit_identity + ".trim." + conserved_residues + ".noLong.focalclade.homologs.filter.names.txt",
+		lastpdf="results/{sample}." + cd_hit_identity + ".trim." + conserved_residues + ".noLong.focalclade.homologs.filter.fasttree.pdf"
+	output:
+		"results/{sample}." + cd_hit_identity + ".trim." + conserved_residues + ".noLong.focalclade.homologs.filter.fasttree.noLong.pdf"
+	conda:
+		"envs/Bio.yaml"
+	shell:
+		"python bin/plotLargeTree.py {input.tree} {output} {input.names}"
+
+rule extract_ingroup_step3:
+	input:
+		ingroup="results/{sample}." + cd_hit_identity + ".trim." + conserved_residues + ".fasttree.noLong.focalclade.txt",
+		tree="results/{sample}." + cd_hit_identity + ".trim." + conserved_residues + ".noLong.focalclade.homologs.filter.noLong.fasttree.tre",
+		lastpdf="results/{sample}." + cd_hit_identity + ".trim." + conserved_residues + ".noLong.focalclade.homologs.filter.fasttree.noLong.pdf"
+	output:
+		"results/{sample}." + cd_hit_identity + ".trim." + conserved_residues + ".noLong.focalclade.homologs.selected.txt"
+	conda: "envs/Bio.yaml"
+	shell:
+		"python bin/extractIngroup.py {input.tree} {input.ingroup} {output}"
+
+rule merge_ingroup_outgroup_step3:
+	input:
+		ingroup="results/{sample}." + cd_hit_identity + ".trim." + conserved_residues + ".noLong.focalclade.homologs.selected.txt",
+		outgroup="results/{sample}." + cd_hit_identity + ".trim." + conserved_residues + ".fasttree.noLong.outgroup.txt",
+		NOG_fasta="results/{sample}." + cd_hit_identity + ".faa",
+		add_fasta="results/{sample}." + cd_hit_identity + ".focalclade.homologs." + cd_hit_identity + ".rename.faa"
+	output:
+		"results/{sample}." + cd_hit_identity + ".trim." + conserved_residues + ".noLong.focalclade.homologs.selected.faa"
+	conda:
+		"envs/Bio.yaml"
+	shell:
+		"python bin/fastaGrep.py <(cat {input.ingroup} {input.outgroup}) <(cat {input.NOG_fasta} {input.add_fasta}) > {output}"
+
+rule mafft_step4:
+	input: "results/{sample}." + cd_hit_identity + ".trim." + conserved_residues + ".noLong.focalclade.homologs.selected.faa"
+	output: "results/{sample}." + cd_hit_identity + ".trim." + conserved_residues + ".noLong.focalclade.homologs.selected.aln"
+	threads: ncpu
+	shell:
+		"mafft --anysymbol --thread {threads} --auto {input} > {output}"
+
+rule trimal_step4:
+	input: "results/{sample}." + cd_hit_identity + ".trim." + conserved_residues + ".noLong.focalclade.homologs.selected.aln"
+	output:"results/{sample}." + cd_hit_identity + ".trim." + conserved_residues + ".noLong.focalclade.homologs.selected.trim.aln"
+	shell:
+		"trimal -in {input} -out {output} -gappyout"
+
+rule conserved_trim_step4:
+	input: "results/{sample}." + cd_hit_identity + ".trim." + conserved_residues + ".noLong.focalclade.homologs.selected.trim.aln"
+	output: "results/{sample}." + cd_hit_identity + ".trim." + conserved_residues + ".noLong.focalclade.homologs.selected.trim." + conserved_residues + ".aln"
+	params: config["conserved_residues"]
+	conda: "envs/Bio.yaml"
+	shell:
+		"python bin/filter_shortSeqs_MSA.py {input} {params} > {output}"
+
+rule fasttree_step4:
+	input:
+		"results/{sample}." + cd_hit_identity + ".trim." + conserved_residues + ".noLong.focalclade.homologs.selected.trim." + conserved_residues + ".aln"
+	output:
+		"results/{sample}." + cd_hit_identity + ".trim." + conserved_residues + ".noLong.focalclade.homologs.selected.trim." + conserved_residues + ".fasttree.tre"
+	log:
+		"results/{sample}." + cd_hit_identity + ".trim." + conserved_residues + ".noLong.focalclade.homologs.selected.trim." + conserved_residues + ".fasttree.log"
+	shell:
+		"FastTree -log {log} {input} > {output}"
+
+rule plot_tree_step4:
+	input: 
+		tree="results/{sample}." + cd_hit_identity + ".trim." + conserved_residues + ".noLong.focalclade.homologs.selected.trim." + conserved_residues + ".fasttree.tre",
+		names="results/{sample}." + cd_hit_identity + ".trim." + conserved_residues + ".noLong.focalclade.homologs.filter.names.txt"
+	output: "results/{sample}." + cd_hit_identity + ".trim." + conserved_residues + ".noLong.focalclade.homologs.selected.trim." + conserved_residues + ".fasttree.pdf"
+	conda: "envs/Bio.yaml"
+	shell:
+		"python bin/plotLargeTree.py {input.tree} {output} {input.names}"
+
+rule interproscan_step4:
+	input:
+		"results/{sample}." + cd_hit_identity + ".trim." + conserved_residues + ".noLong.focalclade.homologs.selected.faa"
+	output:
+		"results/{sample}." + cd_hit_identity + ".trim." + conserved_residues + ".noLong.focalclade.homologs.selected_interpro.tsv"
+	threads: 4
+	log:
+		"results/{sample}." + cd_hit_identity + ".trim." + conserved_residues + ".noLong.focalclade.homologs.selected_interpro.log"
+	shell:
+		"interproscan.sh -appl Pfam -cpu {threads} -f tsv -iprlookup --pathways -i {input} -o {output}"
+
+

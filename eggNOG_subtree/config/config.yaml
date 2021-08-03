@@ -1,0 +1,15 @@
+ncpu: 30
+min_taxa: 200
+max_taxa: 400
+min_support: 0.7
+cd_hit_perc_id: 0.80
+samplefile: "NOGtarget.tsv"
+eggnoglookupfile: "/local/one/data/LipidDivide/dataset/eggnog/v5/lookup/1_LUCA_members.tsv.gz"
+NOGdir: "data/LUCA_NOGs"
+conserved_residues: 0.4
+treeshrink_q: 0.01
+diamond_db: "/local/one/data/databases/nr/v5/nr.dmnd"
+nr_db_fasta: "/local/one/data/databases/nr/v5/nr.gz"
+nr_blast_db: "/server_databases/nr/v5/nr"
+n_blast_targets: 2000
+

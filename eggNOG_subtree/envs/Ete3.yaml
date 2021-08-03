@@ -1,0 +1,10 @@
+name: Tools
+channels:
+  - defaults
+  - bioconda
+  - smirarab 
+dependencies:
+  - treeshrink
+  - seqmagick
+  - pip:
+    - biopython
