@@ -40,6 +40,7 @@ data/
 results/
 log/
 dataset/
+old_scripts/
 
 # snakemake
 .snakemake/

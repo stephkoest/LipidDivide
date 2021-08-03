@@ -224,10 +224,15 @@ def find_leaf_to_prune(dlist):					#parse the list with all neighbor pairs and d
 				
 	
 		if  ((leaf1.dist == leaf2.dist) or (arguments.leaves_pair ==2)):
-			leaf_to_prune = random.choice(list(pair))			#this select the leaf at random within the couple
-			for leaf in pair:
-				if leaf != leaf_to_prune:
-					leaf_to_keep = leaf
+			if (("NCBI|" in leaf1.name) and ("NCBI|" not in leaf2.name)): # added by Stephan: check first if only one of the sequences is not from NCBI. If yes, prune the NCBI sequence only 
+				leaf_to_prune = leaf1.name
+			elif (("NCBI|" in leaf2.name) and ("NCBI|" not in leaf1.name)):
+				leaf_to_prune = leaf2.name
+			else:
+				leaf_to_prune = random.choice(list(pair))			#this select the leaf at random within the couple
+				for leaf in pair:
+					if leaf != leaf_to_prune:
+						leaf_to_keep = leaf
 
 		if arguments.verbose > 1:		
 			print ("leaf_to_check  " + str(leaf_to_prune))
