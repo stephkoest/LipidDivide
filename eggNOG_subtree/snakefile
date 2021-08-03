@@ -3,6 +3,7 @@ configfile: "config/config.yaml"
 #there is some ambigouity between rule cd_hit_homologs_step2 and cd_hit_step1... resolve once I get it
 ruleorder: cd_hit_homologs_step2 > cd_hit_step1 
 ncpu=config["ncpu"]
+RTL=config["RTL"]
 cd_hit_identity = str(int(config["cd_hit_perc_id"]* 100) )
 conserved_residues = str(int(config["conserved_residues"] * 100))
 samples_dict={}
@@ -22,7 +23,8 @@ rule all:
 		expand(join(config["NOGdir"] + "/{sample}.faa"), sample=samples),
 		expand("results/{sample}." + cd_hit_identity + ".trim." + conserved_residues + ".noLong.focalclade.homologs.outgroup.txt", sample = samples),
 		expand(join("results/{sample}." + cd_hit_identity + ".trim." + conserved_residues + ".noLong.focalclade.homologs.selected.trim." + conserved_residues + ".fasttree.pdf"), sample=samples),
-		expand("results/{sample}." + cd_hit_identity + ".trim." + conserved_residues + ".noLong.focalclade.homologs.selected_interpro.tsv", sample = samples)
+		expand("results/{sample}." + cd_hit_identity + ".trim." + conserved_residues + ".noLong.focalclade.homologs.selected_interpro.tsv", sample = samples),
+		expand("results/{sample}." + cd_hit_identity + ".trim." + conserved_residues + ".noLong.focalclade.homologs.selected.trim." + conserved_residues + ".fasttree.tre" + "_trimmed_list_RTL_" + str(RTL), sample=samples)
 		
 
 rule downloadNOGs:
@@ -420,5 +422,17 @@ rule plot_tree_step4:
 	conda: "envs/Bio.yaml"
 	shell:
 		"python bin/plotTree.py {input.tree} {output} {input.names} {input.interpro}"
+
+rule run_Treemmer_step5:
+	input:"results/{sample}." + cd_hit_identity + ".trim." + conserved_residues + ".noLong.focalclade.homologs.selected.trim." + conserved_residues + ".fasttree.tre"
+	output: "results/{sample}." + cd_hit_identity + ".trim." + conserved_residues + ".noLong.focalclade.homologs.selected.trim." + conserved_residues + ".fasttree.tre" + "_trimmed_list_RTL_" + str(RTL)
+	params: 
+		RTL=config["RTL"],
+		r=config["sample_r"]
+	conda: "envs/Bio.yaml"
+	shell:
+		"""
+		python bin/Treemmer_v0.3.py --stop_at_RTL params.RTL -r params.r results/COG2030.80.trim.40.noLong.focalclade.homologs.selected.trim.40.fasttree.tre
+		"""
 
 
