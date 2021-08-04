@@ -12,7 +12,7 @@ conserved_residues: 0.4
 treeshrink_q: 0.01
 diamond_db: "/local/one/data/databases/nr/v5/nr.dmnd"
 nr_db_fasta: "/local/one/data/databases/nr/v5/nr.gz"
-nr_blast_db: "/server_databases/nr/v5/nr"
+nr_blast_db: "/local/one/data/databases/nr/v5/nr"
 n_blast_targets: 2000
 RTL: 0.8
 sample_r: 10
