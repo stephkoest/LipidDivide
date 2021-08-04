@@ -25,7 +25,9 @@ rule all:
 		expand(join("results/{sample}." + cd_hit_identity + ".trim." + conserved_residues + ".noLong.focalclade.homologs.selected.trim." + conserved_residues + ".fasttree.pdf"), sample=samples),
 		expand("results/{sample}." + cd_hit_identity + ".trim." + conserved_residues + ".noLong.focalclade.homologs.selected_interpro.tsv", sample = samples),
 		expand("results/{sample}." + cd_hit_identity + ".trim." + conserved_residues + ".noLong.focalclade.homologs.selected.trim." + conserved_residues + ".fasttree.tre" + "_trimmed_list_RTL_" + str(RTL), sample=samples),
-		expand("results/{sample}." + cd_hit_identity + ".trim." + conserved_residues + ".noLong.focalclade.homologs.selected.pruned.faa", sample=samples)
+		expand("results/{sample}." + cd_hit_identity + ".trim." + conserved_residues + ".noLong.focalclade.homologs.selected.pruned.faa", sample=samples),
+		expand("results/{sample}." + cd_hit_identity + ".trim." + conserved_residues + ".noLong.focalclade.homologs.selected.pruned_rev.aln", sample=samples),
+		expand("results/{sample}." + cd_hit_identity + ".trim." + conserved_residues + ".noLong.focalclade.homologs.selected.pruned.aln", sample=samples)
 		
 
 rule downloadNOGs:
@@ -50,10 +52,18 @@ rule cd_hit_step1:
 
 rule mafft_step1:
 	input: "results/{sample}." + cd_hit_identity + ".faa"
-	output: "results/{sample}." + cd_hit_identity + ".aln"
+	output: 
+		aln="results/{sample}." + cd_hit_identity + ".aln",
+		tre="results/{sample}." + cd_hit_identity + ".mbed"
 	threads: ncpu
+	conda: "envs/tcoffee.yaml"
 	shell:
-		"mafft --anysymbol --thread {threads} --auto {input} > {output}"
+		"""
+		NSEQ=$(expr $(grep -c ">" {input}) / 10)
+		# as proposed in menue
+		t_coffee -reg -seq {input} -nseq NSEQ -tree mbed -method clustalo_msa -outfile {output.aln} -outtree {output.tre} -thread={threads} 
+		#mafft --anysymbol --thread {threads} --auto {input} > {output}
+		"""
 
 rule trimal_step1:
 	input: "results/{sample}." + cd_hit_identity + ".aln"
@@ -236,24 +246,21 @@ rule rename_fasta_step2:
 rule mafft_add_step3:
 	input: 
 		addfasta="results/{sample}." + cd_hit_identity + ".focalclade.homologs." + cd_hit_identity + ".rename.faa",
-		ali="results/{sample}." + cd_hit_identity + ".trim." + conserved_residues + ".noLong.aln",
+		nog="results/{sample}." + cd_hit_identity + ".faa",
 		tree="results/{sample}." + cd_hit_identity + ".trim." + conserved_residues + ".fasttree.noLong.tre"
 	output: 
-		"results/{sample}." + cd_hit_identity + ".trim." + conserved_residues + ".noLong.focalclade.homologs.aln"
+		aln="results/{sample}." + cd_hit_identity + ".trim." + conserved_residues + ".noLong.focalclade.homologs.aln",
+		faa="results/{sample}." + cd_hit_identity + ".trim." + conserved_residues + ".noLong.focalclade.homologs.faa",
+		tre="results/{sample}." + cd_hit_identity + ".trim." + conserved_residues + ".noLong.focalclade.homologs.mbed"
 	threads:
 		ncpu
 	conda:
-		"envs/Bio.yaml"
+		"envs/tcoffee.yaml"
 	shell:
 		"""
-		NSEQ=$(grep -c ">" {input.addfasta})
-		if [[ "$NSEQ" -gt 50000 ]]
-		then
-			mafft --add {input.addfasta} --keeplength --anysymbol --thread {threads} --large --globalpair {input.ali} > {output}
-		else
-			mafft --add {input.addfasta} --keeplength --anysymbol --thread {threads} --auto {input.ali} > {output}
-		fi
-		seqmagick mogrify --deduplicate-sequences --input-format fasta --output-format fasta {output}
+		cat {input.nog} {input.addfasta} > {output.faa}
+		NSEQ=$(expr $(grep -c ">" {output.faa}) / 10)
+		t_coffee -reg -seq {output.faa} -nseq $NSEQ -tree mbed -method clustalo_msa -outfile {output.aln} -outtree {output.tre} -thread={threads} 
 		"""
 
 rule conserved_trim_step3:
@@ -444,4 +451,55 @@ rule extract_sequences_step5:
 	shell:
 		"""
 		python bin/fastaGrep.py {input.treemmer} {input.fasta} > {output}
+		"""
+
+rule reverse_sequences_step5:
+	input: "results/{sample}." + cd_hit_identity + ".trim." + conserved_residues + ".noLong.focalclade.homologs.selected.pruned.faa"
+	output: "results/{sample}." + cd_hit_identity + ".trim." + conserved_residues + ".noLong.focalclade.homologs.selected.pruned_rev.faa"
+	conda: "envs/Bio.yaml"
+	shell:
+		"""
+		seqmagick convert --reverse --input-format fasta --output-format fasta {input} {output}
+		"""
+
+rule Mcoffee_fwd_step5:
+	input:
+		fwd="results/{sample}." + cd_hit_identity + ".trim." + conserved_residues + ".noLong.focalclade.homologs.selected.pruned.faa"
+	output:
+		fwd="results/{sample}." + cd_hit_identity + ".trim." + conserved_residues + ".noLong.focalclade.homologs.selected.pruned.aln"
+	conda: "envs/tcoffee.yaml"
+	shell:
+		"""
+		t_coffee -in {input} Mmafftlinsi_msa Mmafftginsi_msa Mclustalo_msa Mmuscle_msa Mt_coffee_msa -outfile {output}
+		"""
+rule Mcoffee_rev_step5:
+	input:
+		"results/{sample}." + cd_hit_identity + ".trim." + conserved_residues + ".noLong.focalclade.homologs.selected.pruned_rev.faa"
+	output:
+		"results/{sample}." + cd_hit_identity + ".trim." + conserved_residues + ".noLong.focalclade.homologs.selected.pruned_rev.aln"
+	conda: "envs/tcoffee.yaml"
+	shell:
+		"""
+		t_coffee -in {input} Mmafftlinsi_msa Mmafftginsi_msa Mclustalo_msa Mmuscle_msa Mt_coffee_msa -outfile {output}
+		"""
+
+rule reverse_alignment_step5:
+	input: "results/{sample}." + cd_hit_identity + ".trim." + conserved_residues + ".noLong.focalclade.homologs.selected.pruned_rev.aln"
+	output: "results/{sample}." + cd_hit_identity + ".trim." + conserved_residues + ".noLong.focalclade.homologs.selected.pruned_rev_rev.aln"
+	conda: "envs/Bio.yaml"
+	shell:
+		"""
+		seqmagick convert --reverse --input-format phylip --output-format phylip {input} {output}
+		"""
+
+rule tcoffee_combine_step5:
+	input:
+		fwd="results/{sample}." + cd_hit_identity + ".trim." + conserved_residues + ".noLong.focalclade.homologs.selected.pruned.aln",
+		rev="results/{sample}." + cd_hit_identity + ".trim." + conserved_residues + ".noLong.focalclade.homologs.selected.pruned_rev_rev.aln"
+	output: "results/{sample}." + cd_hit_identity + ".trim." + conserved_residues + ".noLong.focalclade.homologs.selected.pruned.combined.aln"
+	threads: ncpu
+	conda: "envs/tcoffee.yaml"
+	shell:
+		"""
+		t_coffee -in={input.fwd} -in={input.rev} -evaluate_mode=t_coffee_slow -thread={threads}
 		"""
