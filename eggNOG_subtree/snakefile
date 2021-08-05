@@ -161,7 +161,9 @@ rule extract_focal_clade_step2:
 	shell:
 		"""
 		## ugly fix for handling 
-		python bin/extractFocalTree.py {input.tree} {params.target} {output.focal} {output.outgroup} {params.min_support} {params.min_taxa} {params.max_taxa} || python bin/extractFocalTree.py {input.tree} {params.target} {output.focal} {output.outgroup} {params.min_support} $(expr {params.min_taxa} / 4) {params.max_taxa} 
+		python bin/extractFocalTree.py {input.tree} {params.target} {output.focal} {output.outgroup} {params.min_support} {params.min_taxa} {params.max_taxa} || \
+		python bin/extractFocalTree.py {input.tree} {params.target} {output.focal} {output.outgroup} {params.min_support} $(expr {params.min_taxa} / 4) {params.max_taxa} || \
+		python bin/extractFocalTree.py {input.tree} {params.target} {output.focal} {output.outgroup} {params.min_support} $(expr {params.min_taxa} / 10) {params.max_taxa}
 		python bin/fastaGrep.py {output.focal} {input.fasta} > {output.focal_fasta}
 		python bin/fastaGrep.py {output.outgroup} {input.fasta} > {output.outgroup_fasta}
 		"""
@@ -267,6 +269,11 @@ rule mafft_add_step3:
 		"""
 		cat {input.nog} {input.addfasta} > {output.faa}
 		NSEQ=$(expr $(grep -c ">" {output.faa}) / 10)
+		if [ $NSEQ -ge 1000 ]
+                then
+                        NSEQ=1000
+                fi
+		
 		t_coffee -reg -seq {output.faa} -nseq $NSEQ -tree mbed -method clustalo_msa -outfile {output.aln} -outtree {output.tre} -thread={threads} 
 		"""
 
