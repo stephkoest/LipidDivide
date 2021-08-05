@@ -8,7 +8,8 @@ cd_hit_perc_id: 0.80
 samplefile: "NOGtarget.tsv"
 eggnoglookupfile: "/local/one/data/LipidDivide/dataset/eggnog/v5/lookup/1_LUCA_members.tsv.gz"
 NOGdir: "data/LUCA_NOGs"
-conserved_residues: 0.4
+final_residues: 0.4
+conserved_residues: 0.01
 treeshrink_q: 0.01
 diamond_db: "/local/one/data/databases/nr/v5/nr.dmnd"
 nr_db_fasta: "/local/one/data/databases/nr/v5/nr.gz"
