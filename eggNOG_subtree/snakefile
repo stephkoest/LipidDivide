@@ -58,7 +58,7 @@ rule mafft_step1:
 	output: 
 		aln="results/{sample}." + cd_hit_identity + ".aln",
 		tre="results/{sample}." + cd_hit_identity + ".mbed"
-	threads: ncpu
+	threads: workflow.cores * 0.7
 	conda: "envs/tcoffee.yaml"
 	shell:
 		"""
@@ -260,7 +260,7 @@ rule mafft_add_step3:
 		faa="results/{sample}." + cd_hit_identity + ".trim." + conserved_residues + ".noLong.focalclade.homologs.faa",
 		tre="results/{sample}." + cd_hit_identity + ".trim." + conserved_residues + ".noLong.focalclade.homologs.mbed"
 	threads:
-		ncpu
+		workflow.cores * 0.7
 	conda:
 		"envs/tcoffee.yaml"
 	shell:
