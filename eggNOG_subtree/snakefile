@@ -6,6 +6,7 @@ ncpu=config["ncpu"]
 RTL=config["RTL"]
 cd_hit_identity = str(int(config["cd_hit_perc_id"]* 100) )
 conserved_residues = str(int(config["conserved_residues"] * 100))
+final_residues = str(int(config["final_residues"] * 100))
 samples_dict={}
 
 with open(config["samplefile"], 'r') as f:
@@ -28,7 +29,8 @@ rule all:
 		expand("results/{sample}." + cd_hit_identity + ".trim." + conserved_residues + ".noLong.focalclade.homologs.selected.pruned.faa", sample=samples),
 		expand("results/{sample}." + cd_hit_identity + ".trim." + conserved_residues + ".noLong.focalclade.homologs.selected.pruned_rev.aln", sample=samples),
 		expand("results/{sample}." + cd_hit_identity + ".trim." + conserved_residues + ".noLong.focalclade.homologs.selected.pruned.aln", sample=samples),
-		expand("results/{sample}." + cd_hit_identity + ".trim." + conserved_residues + ".noLong.focalclade.homologs.selected.pruned_rev_rev.aln", sample=samples)
+		expand("results/{sample}." + cd_hit_identity + ".trim." + conserved_residues + ".noLong.focalclade.homologs.selected.pruned_rev_rev.aln", sample=samples),
+		expand("results/{sample}." + cd_hit_identity + ".trim." + conserved_residues + ".noLong.focalclade.homologs.selected.pruned.combined.aln", sample=samples)
 		
 
 rule downloadNOGs:
@@ -61,8 +63,12 @@ rule mafft_step1:
 	shell:
 		"""
 		NSEQ=$(expr $(grep -c ">" {input}) / 10)
+		if [ $NSEQ -ge 1000 ]
+		then
+			NSEQ=1000
+		fi
 		# as proposed in menue
-		t_coffee -reg -seq {input} -nseq NSEQ -tree mbed -method clustalo_msa -outfile {output.aln} -outtree {output.tre} -thread={threads} 
+		t_coffee -reg -seq {input} -nseq $NSEQ -tree mbed -method clustalo_msa -outfile {output.aln} -outtree {output.tre} -thread={threads} 
 		#mafft --anysymbol --thread {threads} --auto {input} > {output}
 		"""
 
@@ -513,16 +519,16 @@ rule trimal_step5:
 
 rule conserved_trim_step5:
 	input: "results/{sample}." + cd_hit_identity + ".trim." + conserved_residues + ".noLong.focalclade.homologs.selected.pruned.combined.trim.aln"
-	output: "results/{sample}." + cd_hit_identity + ".trim." + conserved_residues + ".noLong.focalclade.homologs.selected.pruned.combined.trim." + conserved_residues + ".aln"
-	params: config["conserved_residues"]
+	output: "results/{sample}." + cd_hit_identity + ".trim." + conserved_residues + ".noLong.focalclade.homologs.selected.pruned.combined.trim." + final_residues + ".aln"
+	params: config["final_residues"]
 	conda: "envs/Bio.yaml"
 	shell:
 		"python bin/filter_shortSeqs_MSA.py {input} {params} > {output}"
 
 rule iqtree_step5:
 	input: "results/{sample}." + cd_hit_identity + ".trim." + conserved_residues + ".noLong.focalclade.homologs.selected.pruned.combined.trim.aln"
-	output: "results/{sample}." + cd_hit_identity + ".trim." + conserved_residues + ".noLong.focalclade.homologs.selected.pruned.combined.trim." + conserved_residues + ".treefile"
-	params: prefix= "results/{sample}." + cd_hit_identity + ".trim." + conserved_residues + ".noLong.focalclade.homologs.selected.pruned.combined.trim." + conserved_residues
+	output: "results/{sample}." + cd_hit_identity + ".trim." + conserved_residues + ".noLong.focalclade.homologs.selected.pruned.combined.trim." + final_residues + ".treefile"
+	params: prefix= "results/{sample}." + cd_hit_identity + ".trim." + conserved_residues + ".noLong.focalclade.homologs.selected.pruned.combined.trim." + final_residues
 	threads: ncpu
 	shell:
 		"""
