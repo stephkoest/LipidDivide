@@ -508,13 +508,13 @@ rule reverse_sequences_step5:
 
 rule Mcoffee_fwd_step5:
 	input:
-		fwd="results/{sample}." + cd_hit_identity + ".trim." + conserved_residues + ".noLong.focalclade.homologs.selected.pruned.faa"
+		"results/{sample}." + cd_hit_identity + ".trim." + conserved_residues + ".noLong.focalclade.homologs.selected.pruned.faa"
 	output:
-		fwd="results/{sample}." + cd_hit_identity + ".trim." + conserved_residues + ".noLong.focalclade.homologs.selected.pruned.aln"
+		"results/{sample}." + cd_hit_identity + ".trim." + conserved_residues + ".noLong.focalclade.homologs.selected.pruned.aln"
 	conda: "envs/tcoffee.yaml"
 	shell:
 		"""
-		t_coffee -in {input} Mmafftlinsi_msa Mmafftginsi_msa Mclustalo_msa Mmuscle_msa Mt_coffee_msa -outfile {output}
+		t_coffee -in {input} Mmafftlinsi_msa Mmafftginsi_msa Mclustalo_msa Mmuscle_msa Mt_coffee_msa -outfile {output} -output=fasta_aln
 		"""
 rule Mcoffee_rev_step5:
 	input:
@@ -524,7 +524,7 @@ rule Mcoffee_rev_step5:
 	conda: "envs/tcoffee.yaml"
 	shell:
 		"""
-		t_coffee -in {input} Mmafftlinsi_msa Mmafftginsi_msa Mclustalo_msa Mmuscle_msa -outfile {output}
+		t_coffee -in {input} Mmafftlinsi_msa Mmafftginsi_msa Mclustalo_msa Mmuscle_msa -outfile {output} -output=fasta_aln
 		"""
 
 rule reverse_alignment_step5:
@@ -533,7 +533,7 @@ rule reverse_alignment_step5:
 	conda: "envs/Bio.yaml"
 	shell:
 		"""
-		seqmagick convert --reverse --input-format clustal --output-format clustal {input} {output}
+		seqmagick convert --reverse --input-format fasta --output-format fasta {input} {output}
 		"""
 
 rule tcoffee_combine_step5:
@@ -545,7 +545,7 @@ rule tcoffee_combine_step5:
 	conda: "envs/tcoffee.yaml"
 	shell:
 		"""
-		t_coffee -in={input.fwd} -in={input.rev} -evaluate_mode=t_coffee_slow -thread={threads} -outfile={output}
+		t_coffee -in={input.fwd} -in={input.rev} -evaluate_mode=t_coffee_slow -thread={threads} -outfile={output} -output=fasta_aln
 		"""
 
 rule trimal_step5:
