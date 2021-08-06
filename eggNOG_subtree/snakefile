@@ -25,6 +25,8 @@ rule all:
 		expand("results/{sample}." + cd_hit_identity + ".trim." + conserved_residues + ".noLong.focalclade.homologs.outgroup.txt", sample = samples),
 		expand(join("results/{sample}." + cd_hit_identity + ".trim." + conserved_residues + ".noLong.focalclade.homologs.selected.trim." + conserved_residues + ".fasttree.pdf"), sample=samples),
 		expand("results/{sample}." + cd_hit_identity + ".trim." + conserved_residues + ".noLong.focalclade.homologs.selected_interpro.tsv", sample = samples),
+		expand("results/{sample}." + cd_hit_identity + ".trim." + conserved_residues + ".noLong.focalclade.homologs.trim.aln", sample = samples),
+		expand("results/{sample}." + cd_hit_identity + ".trim." + conserved_residues + ".noLong.focalclade.homologs.trim.filter.fasttree.tre", sample = samples),
 		expand("results/{sample}." + cd_hit_identity + ".trim." + conserved_residues + ".noLong.focalclade.homologs.selected.trim." + conserved_residues + ".fasttree.tre" + "_trimmed_list_RTL_" + str(RTL), sample=samples),
 		expand("results/{sample}." + cd_hit_identity + ".trim." + conserved_residues + ".noLong.focalclade.homologs.selected.pruned.faa", sample=samples),
 		expand("results/{sample}." + cd_hit_identity + ".trim." + conserved_residues + ".noLong.focalclade.homologs.selected.pruned_rev.aln", sample=samples),
@@ -49,9 +51,19 @@ rule downloadNOGs:
 rule cd_hit_step1:
 	input: config["NOGdir"] + "/{sample}.faa"
 	output: "results/{sample}." + cd_hit_identity + ".faa"
-	params: config["cd_hit_perc_id"]
+	params: 
+		identity = config["cd_hit_perc_id"],
+		target = lambda wcs: samples_dict[wcs.sample]
 	shell:
-		"cd-hit -i {input} -o {output} -c {params} -M 8000"
+		"""
+		cd-hit -i {input} -o {output} -c {params.identity} -M 8000
+		if grep -wq "{params.target}" {output}
+		then
+		    echo {params.target} in dereplicated dataset
+		else
+		    seqtk subseq {input} <(echo {params.target}) >> {output}
+		fi
+		"""
 
 rule mafft_step1:
 	input: "results/{sample}." + cd_hit_identity + ".faa"
@@ -210,10 +222,19 @@ rule cd_hit_homologs_step2:
 		"results/{sample}." + cd_hit_identity + ".focalclade.homologs.faa"
 	output:
 		"results/{sample}." + cd_hit_identity + ".focalclade.homologs." + cd_hit_identity + ".faa"
-	params:
-		config["cd_hit_perc_id"]
+	params: 
+		identity = config["cd_hit_perc_id"],
+		target = lambda wcs: samples_dict[wcs.sample]
 	shell:
-		"cd-hit -i {input} -o {output} -c {params} -M 8000"
+		"""
+		cd-hit -i {input} -o {output} -c {params.identity} -M 8000
+		if grep -wq "{params.target}" {output}
+		then
+		    echo {params.target} in dereplicated dataset
+		else
+		    seqtk subseq {input} <(echo {params.target}) >> {output}
+		fi
+		"""
 
 rule parse_nr_taxonomy:
 	input:
@@ -277,11 +298,17 @@ rule mafft_add_step3:
 		t_coffee -reg -seq {output.faa} -nseq $NSEQ -tree mbed -method clustalo_msa -outfile {output.aln} -outtree {output.tre} -thread={threads} 
 		"""
 
+rule trimal_step3:
+	input: "results/{sample}." + cd_hit_identity + ".trim." + conserved_residues + ".noLong.focalclade.homologs.aln"
+	output: "results/{sample}." + cd_hit_identity + ".trim." + conserved_residues + ".noLong.focalclade.homologs.trim.aln"
+	shell:
+		"trimal -in {input} -out {output} -gappyout"
+
 rule conserved_trim_step3:
 	input:
-		"results/{sample}." + cd_hit_identity + ".trim." + conserved_residues + ".noLong.focalclade.homologs.aln"
+		"results/{sample}." + cd_hit_identity + ".trim." + conserved_residues + ".noLong.focalclade.homologs.trim.aln"
 	output:
-		"results/{sample}." + cd_hit_identity + ".trim." + conserved_residues + ".noLong.focalclade.homologs.filter.aln"
+		"results/{sample}." + cd_hit_identity + ".trim." + conserved_residues + ".noLong.focalclade.homologs.trim.filter.aln"
 	params:
 		config["conserved_residues"]
 	conda: "envs/Bio.yaml"
@@ -290,19 +317,19 @@ rule conserved_trim_step3:
 
 rule fasttree_step3:
 	input:
-		"results/{sample}." + cd_hit_identity + ".trim." + conserved_residues + ".noLong.focalclade.homologs.filter.aln"
+		"results/{sample}." + cd_hit_identity + ".trim." + conserved_residues + ".noLong.focalclade.homologs.trim.filter.aln"
 	output:
-		"results/{sample}." + cd_hit_identity + ".trim." + conserved_residues + ".noLong.focalclade.homologs.filter.fasttree.tre"
+		"results/{sample}." + cd_hit_identity + ".trim." + conserved_residues + ".noLong.focalclade.homologs.trim.filter.fasttree.tre"
 	log:
-		"results/{sample}." + cd_hit_identity + ".trim." + conserved_residues + ".noLong.focalclade.homologs.filter.fasttree.log"
+		"results/{sample}." + cd_hit_identity + ".trim." + conserved_residues + ".noLong.focalclade.homologs.trim.filter.fasttree.log"
 	shell:
 		"FastTree -log {log} {input} > {output}"
 
 rule parse_eggnog_taxonomy_step3:
 	input:
-		"results/{sample}." + cd_hit_identity + ".trim." + conserved_residues + ".noLong.focalclade.homologs.filter.fasttree.tre"
+		"results/{sample}." + cd_hit_identity + ".trim." + conserved_residues + ".noLong.focalclade.homologs.trim.filter.fasttree.tre"
 	output: 
-		"results/{sample}." + cd_hit_identity + ".trim." + conserved_residues + ".noLong.focalclade.homologs.filter.names.txt"
+		"results/{sample}." + cd_hit_identity + ".trim." + conserved_residues + ".noLong.focalclade.homologs.trim.filter.names.txt"
 	log:
 		"results/{sample}." + cd_hit_identity + ".trim." + conserved_residues + ".names.log"
 	conda:
@@ -312,20 +339,20 @@ rule parse_eggnog_taxonomy_step3:
 
 rule plot_tree_step3:
 	input: 
-		tree="results/{sample}." + cd_hit_identity + ".trim." + conserved_residues + ".noLong.focalclade.homologs.filter.fasttree.tre",
-		names="results/{sample}." + cd_hit_identity + ".trim." + conserved_residues + ".noLong.focalclade.homologs.filter.names.txt"
-	output: "results/{sample}." + cd_hit_identity + ".trim." + conserved_residues + ".noLong.focalclade.homologs.filter.fasttree.pdf"
+		tree="results/{sample}." + cd_hit_identity + ".trim." + conserved_residues + ".noLong.focalclade.homologs.trim.filter.fasttree.tre",
+		names="results/{sample}." + cd_hit_identity + ".trim." + conserved_residues + ".noLong.focalclade.homologs.trim.filter.names.txt"
+	output: "results/{sample}." + cd_hit_identity + ".trim." + conserved_residues + ".noLong.focalclade.homologs.trim.filter.fasttree.pdf"
 	conda: "envs/Bio.yaml"
 	shell:
 		"python bin/plotLargeTree.py {input.tree} {output} {input.names}"
 
 rule shrink_tree_step3:
 	input: 
-		tree="results/{sample}." + cd_hit_identity + ".trim." + conserved_residues + ".noLong.focalclade.homologs.filter.fasttree.tre",
-		fasta="results/{sample}." + cd_hit_identity + ".trim." + conserved_residues + ".noLong.focalclade.homologs.filter.aln"
+		tree="results/{sample}." + cd_hit_identity + ".trim." + conserved_residues + ".noLong.focalclade.homologs.trim.filter.fasttree.tre",
+		fasta="results/{sample}." + cd_hit_identity + ".trim." + conserved_residues + ".noLong.focalclade.homologs.trim.filter.aln"
 	output: 
-		txt="results/{sample}." + cd_hit_identity + ".trim." + conserved_residues + ".noLong.focalclade.homologs.filter.fasttree.shrink.txt",
-		fasta="results/{sample}." + cd_hit_identity + ".trim." + conserved_residues + ".noLong.focalclade.homologs.filter.noLong.aln"
+		txt="results/{sample}." + cd_hit_identity + ".trim." + conserved_residues + ".noLong.focalclade.homologs.trim.filter.fasttree.shrink.txt",
+		fasta="results/{sample}." + cd_hit_identity + ".trim." + conserved_residues + ".noLong.focalclade.homologs.trim.filter.noLong.aln"
 	conda: "envs/treeshrink.yaml"
 	params: config["treeshrink_q"]
 	shell:
@@ -336,21 +363,21 @@ rule shrink_tree_step3:
 
 rule fasttree_noLong_step3:
 	input:
-		"results/{sample}." + cd_hit_identity + ".trim." + conserved_residues + ".noLong.focalclade.homologs.filter.noLong.aln"
+		"results/{sample}." + cd_hit_identity + ".trim." + conserved_residues + ".noLong.focalclade.homologs.trim.filter.noLong.aln"
 	output:
-		"results/{sample}." + cd_hit_identity + ".trim." + conserved_residues + ".noLong.focalclade.homologs.filter.noLong.fasttree.tre"
+		"results/{sample}." + cd_hit_identity + ".trim." + conserved_residues + ".noLong.focalclade.homologs.trim.filter.noLong.fasttree.tre"
 	log:
-		"results/{sample}." + cd_hit_identity + ".trim." + conserved_residues + ".noLong.focalclade.homologs.filter.noLong.fasttree.log"
+		"results/{sample}." + cd_hit_identity + ".trim." + conserved_residues + ".noLong.focalclade.homologs.trim.filter.noLong.fasttree.log"
 	shell:
 		"FastTree -log {log} {input} > {output}"
 
 rule plot_tree_noLong_step3:
 	input: 
-		tree="results/{sample}." + cd_hit_identity + ".trim." + conserved_residues + ".noLong.focalclade.homologs.filter.noLong.fasttree.tre",
-		names="results/{sample}." + cd_hit_identity + ".trim." + conserved_residues + ".noLong.focalclade.homologs.filter.names.txt",
-		lastpdf="results/{sample}." + cd_hit_identity + ".trim." + conserved_residues + ".noLong.focalclade.homologs.filter.fasttree.pdf"
+		tree="results/{sample}." + cd_hit_identity + ".trim." + conserved_residues + ".noLong.focalclade.homologs.trim.filter.noLong.fasttree.tre",
+		names="results/{sample}." + cd_hit_identity + ".trim." + conserved_residues + ".noLong.focalclade.homologs.trim.filter.names.txt",
+		lastpdf="results/{sample}." + cd_hit_identity + ".trim." + conserved_residues + ".noLong.focalclade.homologs.trim.filter.fasttree.pdf"
 	output:
-		"results/{sample}." + cd_hit_identity + ".trim." + conserved_residues + ".noLong.focalclade.homologs.filter.fasttree.noLong.pdf"
+		"results/{sample}." + cd_hit_identity + ".trim." + conserved_residues + ".noLong.focalclade.homologs.trim.filter.fasttree.noLong.pdf"
 	conda:
 		"envs/Bio.yaml"
 	shell:
@@ -358,8 +385,8 @@ rule plot_tree_noLong_step3:
 
 rule extract_ingroup_step3:
 	input:
-		tree="results/{sample}." + cd_hit_identity + ".trim." + conserved_residues + ".noLong.focalclade.homologs.filter.noLong.fasttree.tre",
-		lastpdf="results/{sample}." + cd_hit_identity + ".trim." + conserved_residues + ".noLong.focalclade.homologs.filter.fasttree.noLong.pdf"
+		tree="results/{sample}." + cd_hit_identity + ".trim." + conserved_residues + ".noLong.focalclade.homologs.trim.filter.noLong.fasttree.tre",
+		lastpdf="results/{sample}." + cd_hit_identity + ".trim." + conserved_residues + ".noLong.focalclade.homologs.trim.filter.fasttree.noLong.pdf"
 	output:
 		focal="results/{sample}." + cd_hit_identity + ".trim." + conserved_residues + ".noLong.focalclade.homologs.ingroup.txt",
 		outgroup="results/{sample}." + cd_hit_identity + ".trim." + conserved_residues + ".noLong.focalclade.homologs.outgroup.txt"
@@ -373,7 +400,9 @@ rule extract_ingroup_step3:
 	shell:
 		"""
 		## ugly fix for handling error
-		python bin/extractFocalTree.py {input.tree} {params.target} {output.focal} {output.outgroup} {params.min_support} {params.min_taxa} {params.max_taxa} || python bin/extractFocalTree.py {input.tree} {params.target} {output.focal} {output.outgroup} {params.min_support} $(expr {params.min_taxa} / 4) {params.max_taxa} 
+		python bin/extractFocalTree.py {input.tree} {params.target} {output.focal} {output.outgroup} {params.min_support} {params.min_taxa} {params.max_taxa} || \
+		python bin/extractFocalTree.py {input.tree} {params.target} {output.focal} {output.outgroup} {params.min_support} $(expr {params.min_taxa} / 4) {params.max_taxa} || \
+		python bin/extractFocalTree.py {input.tree} {params.target} {output.focal} {output.outgroup} {params.min_support} $(expr {params.min_taxa} / 10) {params.max_taxa}
 		"""
 
 rule merge_ingroup_outgroup_step3:
