@@ -1,4 +1,4 @@
-# EggNOG and NR make trees - workflow
+# <ins>E</ins>ggNOG and <ins>N</ins>R make <ins>T</ins>rees - ENT workflow
 
 ## Introduction
 
