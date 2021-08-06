@@ -533,7 +533,7 @@ rule reverse_alignment_step5:
 	conda: "envs/Bio.yaml"
 	shell:
 		"""
-		seqmagick convert --reverse --input-format phylip --output-format phylip {input} {output}
+		seqmagick convert --reverse --input-format clustal --output-format clustal {input} {output}
 		"""
 
 rule tcoffee_combine_step5:
@@ -545,14 +545,16 @@ rule tcoffee_combine_step5:
 	conda: "envs/tcoffee.yaml"
 	shell:
 		"""
-		t_coffee -in={input.fwd} -in={input.rev} -evaluate_mode=t_coffee_slow -thread={threads}
+		t_coffee -in={input.fwd} -in={input.rev} -evaluate_mode=t_coffee_slow -thread={threads} -outfile={output}
 		"""
 
 rule trimal_step5:
 	input: "results/{sample}." + cd_hit_identity + ".trim." + conserved_residues + ".noLong.focalclade.homologs.selected.pruned.combined.aln"
 	output: "results/{sample}." + cd_hit_identity + ".trim." + conserved_residues + ".noLong.focalclade.homologs.selected.pruned.combined.trim.aln"
 	shell:
-		"trimal -in {input} -out {output} -gappyout"
+		"""
+		trimal -in {input} -out {output} -gappyout
+		"""
 
 rule conserved_trim_step5:
 	input: "results/{sample}." + cd_hit_identity + ".trim." + conserved_residues + ".noLong.focalclade.homologs.selected.pruned.combined.trim.aln"
