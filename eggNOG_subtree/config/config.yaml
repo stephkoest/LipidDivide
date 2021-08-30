@@ -1,9 +1,9 @@
-ncpu: 10
+ncpu: 5
 min_taxa: 200
 max_taxa: 400
 fin_min_taxa: 800
 fin_max_taxa: 3000
-min_support: 0.7
+min_support: 0.65
 cd_hit_perc_id: 0.80
 samplefile: "NOGtarget.tsv"
 eggnoglookupfile: "/local/one/data/LipidDivide/dataset/eggnog/v5/lookup/1_LUCA_members.tsv.gz"

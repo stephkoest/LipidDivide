@@ -33,8 +33,9 @@ rule all:
 		expand("results/{sample}." + cd_hit_identity + ".trim." + conserved_residues + ".noLong.focalclade.homologs.selected.pruned_rev.aln", sample=samples),
 		expand("results/{sample}." + cd_hit_identity + ".trim." + conserved_residues + ".noLong.focalclade.homologs.selected.pruned.aln", sample=samples),
 		expand("results/{sample}." + cd_hit_identity + ".trim." + conserved_residues + ".noLong.focalclade.homologs.selected.pruned_rev_rev.aln", sample=samples),
-		expand("results/{sample}." + cd_hit_identity + ".trim." + conserved_residues + ".noLong.focalclade.homologs.selected.pruned.combined.aln", sample=samples)
-		
+		expand("results/{sample}." + cd_hit_identity + ".trim." + conserved_residues + ".noLong.focalclade.homologs.selected.pruned.combined.aln", sample=samples),
+		expand("results/{sample}." + cd_hit_identity + ".trim." + conserved_residues + ".noLong.focalclade.homologs.selected.pruned.combined.trim.aln", sample=samples),
+		expand("results/{sample}." + cd_hit_identity + ".trim." + conserved_residues + ".noLong.focalclade.homologs.selected.pruned.combined.trim." + final_residues + ".treefile", sample=samples)
 
 rule downloadNOGs:
 	input: 
@@ -565,13 +566,13 @@ rule conserved_trim_step5:
 		"python bin/filter_shortSeqs_MSA.py {input} {params} > {output}"
 
 rule iqtree_step5:
-	input: "results/{sample}." + cd_hit_identity + ".trim." + conserved_residues + ".noLong.focalclade.homologs.selected.pruned.combined.trim.aln"
+	input: "results/{sample}." + cd_hit_identity + ".trim." + conserved_residues + ".noLong.focalclade.homologs.selected.pruned.combined.trim." + final_residues + ".aln"
 	output: "results/{sample}." + cd_hit_identity + ".trim." + conserved_residues + ".noLong.focalclade.homologs.selected.pruned.combined.trim." + final_residues + ".treefile"
 	params: prefix= "results/{sample}." + cd_hit_identity + ".trim." + conserved_residues + ".noLong.focalclade.homologs.selected.pruned.combined.trim." + final_residues
 	threads: ncpu
 	shell:
 		"""
-		iqtree -s {input} -m MFP -mset LG,LG+10,LG+20,LG+30,LG+40,LG+50,LG+60,LG4M,LG4X -mrate ,R4,R5,R6,R7,R8,R9,R10,G4 \
-			-mfreq ,F -T {threads} -wsl -wbt -alrt 1000 -bb 1000 -seed 12345 -pre {params.prefix}
+		iqtree -s {input} -m MFP -mset LG,LG+C10,LG+C20,LG+C30,LG+C40,LG+C50,LG+C60,LG4M,LG4X -mrate ,G4,R4,R5,R6 \
+			-mfreq ,F -nt {threads} -wsr -wsl -wbt -alrt 1000 -bb 1000 -seed 12345 -pre {params.prefix} -redo
 		"""
 
