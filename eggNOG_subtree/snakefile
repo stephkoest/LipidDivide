@@ -525,7 +525,7 @@ rule Mcoffee_rev_step5:
 	conda: "envs/tcoffee.yaml"
 	shell:
 		"""
-		t_coffee -in {input} Mmafftlinsi_msa Mmafftginsi_msa Mclustalo_msa Mmuscle_msa -outfile {output} -output=fasta_aln
+		t_coffee -in {input} Mmafftlinsi_msa Mmafftginsi_msa Mclustalo_msa Mmuscle_msa Mt_coffee_msa -outfile {output} -output=fasta_aln
 		"""
 
 rule reverse_alignment_step5:
