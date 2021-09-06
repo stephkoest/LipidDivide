@@ -513,9 +513,10 @@ rule Mcoffee_fwd_step5:
 	output:
 		"results/{sample}." + cd_hit_identity + ".trim." + conserved_residues + ".noLong.focalclade.homologs.selected.pruned.aln"
 	conda: "envs/tcoffee.yaml"
+	threads: ncpu
 	shell:
 		"""
-		t_coffee -in {input} Mmafftlinsi_msa Mmafftginsi_msa Mclustalo_msa Mmuscle_msa Mt_coffee_msa -outfile {output} -output=fasta_aln
+		t_coffee -in {input} Mmafftlinsi_msa Mmafftginsi_msa Mclustalo_msa Mmuscle_msa Mt_coffee_msa -outfile {output} -output=fasta_aln -multi_core={threads}
 		"""
 rule Mcoffee_rev_step5:
 	input:
@@ -523,9 +524,10 @@ rule Mcoffee_rev_step5:
 	output:
 		"results/{sample}." + cd_hit_identity + ".trim." + conserved_residues + ".noLong.focalclade.homologs.selected.pruned_rev.aln"
 	conda: "envs/tcoffee.yaml"
+	threads: ncpu
 	shell:
 		"""
-		t_coffee -in {input} Mmafftlinsi_msa Mmafftginsi_msa Mclustalo_msa Mmuscle_msa Mt_coffee_msa -outfile {output} -output=fasta_aln
+		t_coffee -in {input} Mmafftlinsi_msa Mmafftginsi_msa Mclustalo_msa Mmuscle_msa Mt_coffee_msa -outfile {output} -output=fasta_aln -multi_core={threads}
 		"""
 
 rule reverse_alignment_step5:
