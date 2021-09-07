@@ -35,7 +35,7 @@ rule all:
 		expand("results/{sample}." + cd_hit_identity + ".trim." + conserved_residues + ".noLong.focalclade.homologs.selected.pruned_rev_rev.aln", sample=samples),
 		expand("results/{sample}." + cd_hit_identity + ".trim." + conserved_residues + ".noLong.focalclade.homologs.selected.pruned.combined.aln", sample=samples),
 		expand("results/{sample}." + cd_hit_identity + ".trim." + conserved_residues + ".noLong.focalclade.homologs.selected.pruned.combined.trim.aln", sample=samples),
-		expand("results/{sample}." + cd_hit_identity + ".trim." + conserved_residues + ".noLong.focalclade.homologs.selected.pruned.combined.trim." + final_residues + ".treefile", sample=samples)
+		expand("results/{sample}." + cd_hit_identity + ".trim." + conserved_residues + ".noLong.focalclade.homologs.selected.pruned.combined.trim." + final_residues + ".splits.nex", sample=samples)
 
 rule downloadNOGs:
 	input: 
@@ -481,11 +481,12 @@ rule run_Treemmer_step5:
 	output: "results/{sample}." + cd_hit_identity + ".trim." + conserved_residues + ".noLong.focalclade.homologs.selected.trim." + conserved_residues + ".fasttree.tre" + "_trimmed_list_RTL_" + str(RTL)
 	params: 
 		RTL=config["RTL"],
-		r=config["sample_r"]
+		r=config["sample_r"],
+		target = lambda wcs: samples_dict[wcs.sample]
 	conda: "envs/Bio.yaml"
 	shell:
 		"""
-		python bin/Treemmer_v0.3.py --stop_at_RTL {params.RTL} -r {params.r} {input}
+		python bin/Treemmer_v0.3.py --stop_at_RTL {params.RTL} -r {params.r} --focal_sequence {params.target} {input}
 		"""
 
 rule extract_sequences_step5:
