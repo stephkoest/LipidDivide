@@ -184,7 +184,7 @@ def find_leaf_to_prune_random(leaves):
 ##########################################		IDENTIFY  LEAF TO PRUNE			#######################
 
 
-def find_leaf_to_prune(dlist):					#parse the list with all neighbor pairs and distances, find the closest pair and select the leaf
+def find_leaf_to_prune(dlist, focalseq = None):					#parse the list with all neighbor pairs and distances, find the closest pair and select the leaf
 	warning=1
 	while warning != 0:
 		if (len(dlist) == 0):
@@ -226,8 +226,32 @@ def find_leaf_to_prune(dlist):					#parse the list with all neighbor pairs and d
 		if  ((leaf1.dist == leaf2.dist) or (arguments.leaves_pair ==2)):
 			if (("NCBI|" in leaf1.name) and ("NCBI|" not in leaf2.name)): # added by Stephan: check first if only one of the sequences is not from NCBI. If yes, prune the NCBI sequence only 
 				leaf_to_prune = leaf1.name
+				leaf_to_keep = leaf2.name
 			elif (("NCBI|" in leaf2.name) and ("NCBI|" not in leaf1.name)):
 				leaf_to_prune = leaf2.name
+				leaf_to_keep = leaf1.name
+			###### STEPHAN MESSING WOTH CODE ####################
+			###### WORKING ON KEEPING SELECT TAXID ##############
+			####### First try to identify target seq ############
+			elif focalseq is not None: #added by stephan: check for focal sequences
+				focaltax = focalseq.split(".")[0]
+				if ((focalseq == leaf1.name):
+					leaf_to_prune = leaf2.name
+					leaf_to_keep = leaf1.name
+				elif (focalseq == leaf2.name)):
+					leaf_to_prune = leaf1.name
+					leaf_to_keep = leaf2.name
+				elif ((focaltax in leaf2.name) and (focaltax not in leaf1.name)):
+					leaf_to_prune = leaf1.name
+					leaf_to_keep = leaf2.name
+				elif ((focaltax in leaf1.name) and (focaltax not in leaf2.name)):
+					leaf_to_prune = leaf2.name
+					leaf_to_keep = leaf1.name
+				else:
+					leaf_to_prune = random.choice(list(pair))
+					for leaf in pair:
+						if leaf != leaf_to_prune:
+							leaf_to_keep = leaf
 			else:
 				leaf_to_prune = random.choice(list(pair))			#this select the leaf at random within the couple
 				for leaf in pair:
@@ -436,6 +460,7 @@ parser.add_argument('-pa' ,'--plot_always', default= False, help='output the RTL
 parser.add_argument('-pc' ,'--plot_complete', default= False, help='plot the complete RTL plot and file when the -X or -RTL options are specified ', action='store_true')
 parser.add_argument('-sX','--switch_at_X', metavar='sX', default=1, help='Treemmer will start normally and switch to random subsampling when the tree has less than sX leaves. This option can be used with -sRTL, Treemmer will change behaviour as soon as one of the two criteria is met' , type =int, nargs='?')
 parser.add_argument('-sRTL','--switch_at_RTL', metavar='0-1', default=0, help='Treemmer will start normally and switch to random subsampling when the tree is shorter than sRTL.  This option can be used with -sX, Treemmer will change behaviour as soon as one of the two criteria is met', type =restricted_float, nargs='?')
+parser.add_argument('-fs', '--focal_sequence', type=str, help='A focal sequence provided in the "Taxid"."Protein_ID" format.', default= None)
 arguments = parser.parse_args()
 
 if ((not (arguments.stop_at_RTL)) and (not(arguments.stop_at_X_leaves))):
