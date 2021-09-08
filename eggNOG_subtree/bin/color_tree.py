@@ -23,18 +23,23 @@ def get_color_taxon(name, tax2color):
 def get_taxonomy(tree, tax2color):
     ncbi = ete3.ncbi_taxonomy.NCBITaxa()
     for l in tree.get_leaves():
-        if re.match("^[0-9]+", l.name):
-            lin = ncbi.get_lineage(int(l.name.split('.')[0]))
-            tax = []
-            for t in lin: 
-                name = ncbi.get_taxid_translator([t])[t]
-                name = re.sub(r"[\ |/|\.|'|&|(|)]|:", '_', name)
-                if ncbi.get_rank([t])[t] in ['species', 'family', 'class', 'phylum', 'kingdom', 'superkingdom']:
-                    tax.append(name)
-            tax = "_".join(tax + [l.name])
-            col = get_color_taxon(l.name, tax2color)
-            l.name = tax
-            tax2color[l.name] = col
+        try:
+            if re.match("^[0-9]+", l.name):
+                lin = ncbi.get_lineage(int(l.name.split('.')[0]))
+                tax = []
+                for t in lin: 
+                     name = ncbi.get_taxid_translator([t])[t]
+                     name = re.sub(r"[\ |/|\.|'|&|(|)]|:", '_', name)
+                     if ncbi.get_rank([t])[t] in ['species', 'family', 'class', 'phylum', 'kingdom', 'superkingdom']:
+                            tax.append(name)
+                tax = "_".join(tax + [l.name])
+                col = get_color_taxon(l.name, tax2color)
+                l.name = '\"' + re.sub(r'\[(.*?)\]' , r'\1',tax) +'\"'
+                tax2color[l.name] = col
+        except ValueError:
+            print("No taxonomy for: "+l.name)
+        except TypeError:
+            print("No taxonomy for: "+l.name)
                 
 def get_taxa_block_nexus(tree, tax2color):
     taxa_block = "begin taxa;\n"
