@@ -234,11 +234,11 @@ def find_leaf_to_prune(dlist, focalseq = None):					#parse the list with all nei
 			###### WORKING ON KEEPING SELECT TAXID ##############
 			####### First try to identify target seq ############
 			elif focalseq is not None: #added by stephan: check for focal sequences
-				focaltax = focalseq.split(".")[0]
-				if ((focalseq == leaf1.name):
+				focaltax = focalseq.split(".")[0] + "." #split ProtID to get TaxID and add point for search
+				if focalseq == leaf1.name:
 					leaf_to_prune = leaf2.name
-					leaf_to_keep = leaf1.name
-				elif (focalseq == leaf2.name)):
+					leaf_to_keep = leaf1.name #redundant, could be summarized after if else statements
+				elif focalseq == leaf2.name:
 					leaf_to_prune = leaf1.name
 					leaf_to_keep = leaf2.name
 				elif ((focaltax in leaf2.name) and (focaltax not in leaf1.name)):
@@ -591,7 +591,7 @@ while (len(t) > 3):								#################### Main loop ######################
 
 			(leaf_to_p)= find_leaf_to_prune_random(leaves)		#find leaf to prune,  protections (from -lm option) are embedded in the function
 		else:
-			(leaf_to_p) = find_leaf_to_prune(DLIST)			#find leaf to prune,  protections (from -lm option) are embedded in the function
+			(leaf_to_p) = find_leaf_to_prune(DLIST, arguments.focal_sequence)			#find leaf to prune,  protections (from -lm option) are embedded in the function
 
 
 		if (leaf_to_p == "stop,"):
