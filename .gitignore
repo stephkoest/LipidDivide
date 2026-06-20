@@ -44,3 +44,14 @@ old_scripts/
 
 # snakemake
 .snakemake/
+
+# --- This repo: manuscript & scratch kept out of version control ---
+docs/
+working/
+.LipidDivide.tar.gz.*
+
+# --- Curated paper outputs intentionally kept (override the bulk rules above) ---
+!final_trees/**/*.aln
+!final_trees/**/*.gz
+!final_trees/**/*.log
+!synteny_screen/**/*.gz
