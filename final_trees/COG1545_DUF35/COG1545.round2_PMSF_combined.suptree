@@ -1,0 +1,202 @@
+#NEXUS
+begin taxa;
+	dimensions ntax=100;
+	taxlabels
+	'1006006.Mcup_1690'[&OUT="Outgroup",FullName="Archaea_Crenarchaeota_Thermoprotei_Sulfolobaceae_Metallosphaera_cuprina@1006006.Mcup_1690"]
+	'1050719.NCBI|WP_018031329.1'[&FullName="Archaea_Crenarchaeota@1050719.NCBI|WP_018031329.1"]
+	'1056495.Calag_1039'[&FullName="Archaea_Crenarchaeota_Thermoprotei_Caldisphaeraceae_Caldisphaera_lagunensis@1056495.Calag_1039"]
+	'1104572.NCBI|WP_020266713.1'[&FullName="Archaea_Thaumarchaeota@1104572.NCBI|WP_020266713.1"]
+	'1104572.NCBI|WP_020267276.1'[&FullName="Archaea_Thaumarchaeota@1104572.NCBI|WP_020267276.1"]
+	'1198449.ACAM_0607'[&FullName="Archaea_Crenarchaeota_Thermoprotei_Desulfurococcaceae_Aeropyrum_camini@1198449.ACAM_0607"]
+	'1540082.NCBI|WP_171714381.1'[&OUT="Outgroup",FullName="Archaea_Crenarchaeota_Thermoprotei_Sulfolobaceae_Acidianus_sp__RZ1@1540082.NCBI|WP_171714381.1"]
+	'1670455.NCBI|WP_126450106.1'[&FullName="Archaea_Crenarchaeota_Thermoprotei_Sulfolobaceae_Sulfodiicoccus_acidiphilus@1670455.NCBI|WP_126450106.1"]
+	'1685127.NCBI|KON30937.1'[&OUT="Outgroup",FullName="Archaea_Candidatus_Bathyarchaeota_miscellaneous_Crenarchaeota_group-15_archaeon_DG-45@1685127.NCBI|KON30937.1"]
+	'1698279.NCBI|KXB04322.1'[&OUT="Outgroup",FullName="Archaea_Euryarchaeota_candidate_division_MSBL1_archaeon_SCGC-AAA382A13@1698279.NCBI|KXB04322.1"]
+	'1714259.NCBI|KUO90454.1'[&OUT="Outgroup",FullName="Archaea_Crenarchaeota_Thermoprotei_Thermoproteaceae_Pyrobaculum_sp__OCT_11@1714259.NCBI|KUO90454.1"]
+	'1714261.NCBI|KUO91764.1'[&FullName="Archaea_Crenarchaeota_Thermoprotei_Thermoproteaceae_Thermocladium_sp__ECH_B@1714261.NCBI|KUO91764.1"]
+	'1797286.NCBI|OFX16061.1'[&OUT="Outgroup",FullName="Archaea_archaeon_RBG_16_50_20@1797286.NCBI|OFX16061.1"]
+	'1872399.NCBI|HGQ49966.1'[&FullName="Archaea_Crenarchaeota_Thermoprotei_Desulfurococcaceae_Aeropyrum_sp_@1872399.NCBI|HGQ49966.1"]
+	'1872626.NCBI|HGJ08959.1'[&OUT="Outgroup",FullName="Archaea_Euryarchaeota_Archaeoglobi_Archaeoglobaceae_Archaeoglobus_sp_@1872626.NCBI|HGJ08959.1"]
+	'1872626.NCBI|MBO8181906.1'[&OUT="Outgroup",FullName="Archaea_Euryarchaeota_Archaeoglobi_Archaeoglobaceae_Archaeoglobus_sp_@1872626.NCBI|MBO8181906.1"]
+	'1906665.NCBI|TSA43374.1'[&OUT="Outgroup",FullName="Archaea_archaeon@1906665.NCBI|TSA43374.1"]
+	'1927129.NCBI|WP_161490796.1'[&OUT="Outgroup",FullName="Archaea_Euryarchaeota_Methanonatronarchaeia_Methanonatronarchaeaceae_Methanonatronarchaeum_thermophilum@1927129.NCBI|WP_161490796.1"]
+	'1970083.NCBI|RUM46705.1'[&FullName="Archaea_Crenarchaeota_Thermoprotei_Pyrodictiaceae_Hyperthermus_sp_@1970083.NCBI|RUM46705.1"]
+	'1978153.NCBI|PSN93724.1'[&FullName="Archaea_Candidatus_Marsarchaeota_Candidatus_Marsarchaeota_G1_archaeon_OSP_B@1978153.NCBI|PSN93724.1"]
+	'1978162.NCBI|PSN90673.1'[&FullName="Archaea_Candidatus_Marsarchaeota_Candidatus_Marsarchaeota_G2_archaeon_ECH_B_SAG-M15@1978162.NCBI|PSN90673.1"]
+	'1980982.NCBI|PUA33004.1'[&OUT="Outgroup",FullName="Archaea_Thaumarchaeota_Aigarchaeota_archaeon_NZ13_MG1@1980982.NCBI|PUA33004.1"]
+	'1987491.NCBI|PVU74750.1'[&OUT="Outgroup",FullName="Archaea_Crenarchaeota_Thermoprotei_Sulfolobaceae_Sulfolobus_sp__SCGC_AB-777_G06@1987491.NCBI|PVU74750.1"]
+	'2012509.NCBI|OYT50584.1'[&OUT="Outgroup",FullName="Archaea_Candidatus_Bathyarchaeota_Candidatus_Bathyarchaeota_archaeon_ex4484_135@2012509.NCBI|OYT50584.1"]
+	'2012529.NCBI|OYT34727.1'[&FullName="Archaea_Euryarchaeota_Archaeoglobi_Archaeoglobales_archaeon_ex4484_92@2012529.NCBI|OYT34727.1"]
+	'2012530.NCBI|PCN50543.1'[&OUT="Outgroup",FullName="Archaea_Candidatus_Geothermarchaeota_Candidatus_Geothermarchaeota_archaeon_ex4572_27@2012530.NCBI|PCN50543.1"]
+	'2012532.NCBI|OYT67341.1'[&FullName="Archaea_Thaumarchaeota_Thaumarchaeota_archaeon_ex4484_121@2012532.NCBI|OYT67341.1"]
+	'2026714.NCBI|HDM88115.1'[&FullName="Archaea_Candidatus_Bathyarchaeota_Candidatus_Bathyarchaeota_archaeon@2026714.NCBI|HDM88115.1"]
+	'2026714.NCBI|HDN02028.1'[&OUT="Outgroup",FullName="Archaea_Candidatus_Bathyarchaeota_Candidatus_Bathyarchaeota_archaeon@2026714.NCBI|HDN02028.1"]
+	'2026714.NCBI|HER54537.1'[&OUT="Outgroup",FullName="Archaea_Candidatus_Bathyarchaeota_Candidatus_Bathyarchaeota_archaeon@2026714.NCBI|HER54537.1"]
+	'2026714.NCBI|HGI37936.1'[&OUT="Outgroup",FullName="Archaea_Candidatus_Bathyarchaeota_Candidatus_Bathyarchaeota_archaeon@2026714.NCBI|HGI37936.1"]
+	'2026714.NCBI|HGK14258.1'[&FullName="Archaea_Candidatus_Bathyarchaeota_Candidatus_Bathyarchaeota_archaeon@2026714.NCBI|HGK14258.1"]
+	'2026714.NCBI|HGL60272.1'[&OUT="Outgroup",FullName="Archaea_Candidatus_Bathyarchaeota_Candidatus_Bathyarchaeota_archaeon@2026714.NCBI|HGL60272.1"]
+	'2026714.NCBI|HGL60895.1'[&OUT="Outgroup",FullName="Archaea_Candidatus_Bathyarchaeota_Candidatus_Bathyarchaeota_archaeon@2026714.NCBI|HGL60895.1"]
+	'2026714.NCBI|HGN40544.1'[&FullName="Archaea_Candidatus_Bathyarchaeota_Candidatus_Bathyarchaeota_archaeon@2026714.NCBI|HGN40544.1"]
+	'2026714.NCBI|HGO11015.1'[&FullName="Archaea_Candidatus_Bathyarchaeota_Candidatus_Bathyarchaeota_archaeon@2026714.NCBI|HGO11015.1"]
+	'2026714.NCBI|HHI38953.1'[&OUT="Outgroup",FullName="Archaea_Candidatus_Bathyarchaeota_Candidatus_Bathyarchaeota_archaeon@2026714.NCBI|HHI38953.1"]
+	'2026714.NCBI|HHL04281.1'[&OUT="Outgroup",FullName="Archaea_Candidatus_Bathyarchaeota_Candidatus_Bathyarchaeota_archaeon@2026714.NCBI|HHL04281.1"]
+	'2026714.NCBI|MBC8223887.1'[&OUT="Outgroup",FullName="Archaea_Candidatus_Bathyarchaeota_Candidatus_Bathyarchaeota_archaeon@2026714.NCBI|MBC8223887.1"]
+	'2026714.NCBI|MBE0511651.1'[&OUT="Outgroup",FullName="Archaea_Candidatus_Bathyarchaeota_Candidatus_Bathyarchaeota_archaeon@2026714.NCBI|MBE0511651.1"]
+	'2026714.NCBI|MBS7647835.1'[&FullName="Archaea_Candidatus_Bathyarchaeota_Candidatus_Bathyarchaeota_archaeon@2026714.NCBI|MBS7647835.1"]
+	'2026714.NCBI|MBT8171336.1'[&OUT="Outgroup",FullName="Archaea_Candidatus_Bathyarchaeota_Candidatus_Bathyarchaeota_archaeon@2026714.NCBI|MBT8171336.1"]
+	'2026714.NCBI|RLG92439.1'[&OUT="Outgroup",FullName="Archaea_Candidatus_Bathyarchaeota_Candidatus_Bathyarchaeota_archaeon@2026714.NCBI|RLG92439.1"]
+	'2026714.NCBI|RLI27099.1'[&OUT="Outgroup",FullName="Archaea_Candidatus_Bathyarchaeota_Candidatus_Bathyarchaeota_archaeon@2026714.NCBI|RLI27099.1"]
+	'2026714.NCBI|RLI43407.1'[&OUT="Outgroup",FullName="Archaea_Candidatus_Bathyarchaeota_Candidatus_Bathyarchaeota_archaeon@2026714.NCBI|RLI43407.1"]
+	'2026724.NCBI|HGE87377.1'[&OUT="Outgroup",FullName="Bacteria_Chloroflexi_Chloroflexi_bacterium@2026724.NCBI|HGE87377.1"]
+	'2026739.NCBI|HGD44669.1'[&FullName="Archaea_Euryarchaeota_Euryarchaeota_archaeon@2026739.NCBI|HGD44669.1"]
+	'2026739.NCBI|HGE76880.1'[&FullName="Archaea_Euryarchaeota_Euryarchaeota_archaeon@2026739.NCBI|HGE76880.1"]
+	'2026795.NCBI|MBI2185375.1'[&OUT="Outgroup",FullName="Archaea_Thaumarchaeota_Thaumarchaeota_archaeon@2026795.NCBI|MBI2185375.1"]
+	'2026795.NCBI|MBI3022467.1'[&OUT="Outgroup",FullName="Archaea_Thaumarchaeota_Thaumarchaeota_archaeon@2026795.NCBI|MBI3022467.1"]
+	'2026795.NCBI|MBI3860020.1'[&OUT="Outgroup",FullName="Archaea_Thaumarchaeota_Thaumarchaeota_archaeon@2026795.NCBI|MBI3860020.1"]
+	'2035437.NCBI|GBC69474.1'[&FullName="Archaea_archaeon_HR01@2035437.NCBI|GBC69474.1"]
+	'2035438.NCBI|GBC70762.1'[&OUT="Outgroup",FullName="Archaea_archaeon_HR02@2035438.NCBI|GBC70762.1"]
+	'2056630.NCBI|RLG49748.1'[&OUT="Outgroup",FullName="Archaea_Candidatus_Korarchaeota_Candidatus_Korarchaeota_archaeon@2056630.NCBI|RLG49748.1"]
+	'2056630.NCBI|RLG54758.1'[&OUT="Outgroup",FullName="Archaea_Candidatus_Korarchaeota_Candidatus_Korarchaeota_archaeon@2056630.NCBI|RLG54758.1"]
+	'2056631.NCBI|HET80167.1'[&FullName="Archaea_Crenarchaeota_Crenarchaeota_archaeon@2056631.NCBI|HET80167.1"]
+	'2056631.NCBI|HHR65596.1'[&FullName="Archaea_Crenarchaeota_Crenarchaeota_archaeon@2056631.NCBI|HHR65596.1"]
+	'224325.AF_0437'[&OUT="Outgroup",FullName="Archaea_Euryarchaeota_Archaeoglobi_Archaeoglobaceae_Archaeoglobus_fulgidus@224325.AF_0437"]
+	'2250258.NCBI|RLI81271.1'[&OUT="Outgroup",FullName="Archaea_Euryarchaeota_Archaeoglobi_Archaeoglobales_archaeon@2250258.NCBI|RLI81271.1"]
+	'2250273.NCBI|HIE36964.1'[&FullName="Archaea_Candidatus_Geothermarchaeota_Candidatus_Geothermarchaeota_archaeon@2250273.NCBI|HIE36964.1"]
+	'2250273.NCBI|RLG62746.1'[&FullName="Archaea_Candidatus_Geothermarchaeota_Candidatus_Geothermarchaeota_archaeon@2250273.NCBI|RLG62746.1"]
+	'2250277.NCBI|HEW93332.1'[&FullName="Archaea_Crenarchaeota_Thermoprotei_Thermoprotei_archaeon@2250277.NCBI|HEW93332.1"]
+	'2268176.NCBI|HES72358.1'[&FullName="Archaea_Crenarchaeota_Thermoprotei_Acidilobales_archaeon@2268176.NCBI|HES72358.1"]
+	'2268198.NCBI|HDD39982.1'[&FullName="Archaea_Thaumarchaeota_Nitrososphaeria_Nitrososphaeria_archaeon@2268198.NCBI|HDD39982.1"]
+	'2268198.NCBI|HDD66470.1'[&FullName="Archaea_Thaumarchaeota_Nitrososphaeria_Nitrososphaeria_archaeon@2268198.NCBI|HDD66470.1"]
+	'2268198.NCBI|HEP36495.1'[&FullName="Archaea_Thaumarchaeota_Nitrososphaeria_Nitrososphaeria_archaeon@2268198.NCBI|HEP36495.1"]
+	'2268198.NCBI|HEP36496.1'[&FullName="Archaea_Thaumarchaeota_Nitrososphaeria_Nitrososphaeria_archaeon@2268198.NCBI|HEP36496.1"]
+	'2268198.NCBI|HEU16560.1'[&FullName="Archaea_Thaumarchaeota_Nitrososphaeria_Nitrososphaeria_archaeon@2268198.NCBI|HEU16560.1"]
+	'2268198.NCBI|HGK50733.1'[&FullName="Archaea_Thaumarchaeota_Nitrososphaeria_Nitrososphaeria_archaeon@2268198.NCBI|HGK50733.1"]
+	'2268198.NCBI|HGY36011.1'[&FullName="Archaea_Thaumarchaeota_Nitrososphaeria_Nitrososphaeria_archaeon@2268198.NCBI|HGY36011.1"]
+	'2268198.NCBI|HHN52910.1'[&OUT="Outgroup",FullName="Archaea_Thaumarchaeota_Nitrososphaeria_Nitrososphaeria_archaeon@2268198.NCBI|HHN52910.1"]
+	'2268204.NCBI|MBD6955889.1'[&FullName="Archaea_Candidatus_Thermoplasmatota_Thermoplasmata_Thermoplasmatales_archaeon@2268204.NCBI|MBD6955889.1"]
+	'2528703.NCBI|HID05104.1'[&OUT="Outgroup",FullName="Archaea_Thaumarchaeota_Aigarchaeota_archaeon@2528703.NCBI|HID05104.1"]
+	'2546571.NCBI|TDA36295.1'[&OUT="Outgroup",FullName="Archaea_Candidatus_Nezhaarchaeota_Candidatus_Nezhaarchaeota_archaeon_WYZ-LMO8@2546571.NCBI|TDA36295.1"]
+	'273057.SSO2626'[&OUT="Outgroup",FullName="Archaea_Crenarchaeota_Thermoprotei_Sulfolobaceae_Saccharolobus_solfataricus@273057.SSO2626"]
+	'273063.STK_00800'[&FullName="Archaea_Crenarchaeota_Thermoprotei_Sulfolobaceae_Sulfurisphaera_tokodaii@273063.STK_00800"]
+	'273063.STK_24190'[&OUT="Outgroup",FullName="Archaea_Crenarchaeota_Thermoprotei_Sulfolobaceae_Sulfurisphaera_tokodaii@273063.STK_24190"]
+	'273075.Ta0031'[&FullName="Archaea_Candidatus_Thermoplasmatota_Thermoplasmata_Thermoplasmataceae_Thermoplasma_acidophilum@273075.Ta0031"]
+	'273116.14324281'[&FullName="Archaea_Candidatus_Thermoplasmatota_Thermoplasmata_Thermoplasmataceae_Thermoplasma_volcanium@273116.14324281"]
+	'2823152.NCBI|BCU66874.1'[&FullName="Archaea_Crenarchaeota_Thermoprotei_Sulfolobales_archaeon_HS-7@2823152.NCBI|BCU66874.1"]
+	'2823152.NCBI|BCU68136.1'[&OUT="Outgroup",FullName="Archaea_Crenarchaeota_Thermoprotei_Sulfolobales_archaeon_HS-7@2823152.NCBI|BCU68136.1"]
+	'2830916.NCBI|MBS7288909.1'[&OUT="Outgroup",FullName="Archaea_Candidatus_Freyarchaeota_Candidatus_Freyarchaeota_archaeon@2830916.NCBI|MBS7288909.1"]
+	'311458.NCBI|BAJ50235.1'[&FullName="Archaea_Thaumarchaeota_Candidatus_Caldarchaeum_subterraneum@311458.NCBI|BAJ50235.1"]
+	'312539.NCBI|WP_110381039.1'[&OUT="Outgroup",FullName="Archaea_Crenarchaeota_Thermoprotei_Sulfolobaceae_Acidianus_sulfidivorans@312539.NCBI|WP_110381039.1"]
+	'330779.Saci_1120'[&FullName="Archaea_Crenarchaeota_Thermoprotei_Sulfolobaceae_Sulfolobus_acidocaldarius@330779.Saci_1120",!color=#cc00cc]
+	'330779.Saci_2210'[&FullName="Archaea_Crenarchaeota_Thermoprotei_Sulfolobaceae_Sulfolobus_acidocaldarius@330779.Saci_2210",!color=#cc00cc]
+	'330779.Saci_2291'[&OUT="Outgroup",FullName="Archaea_Crenarchaeota_Thermoprotei_Sulfolobaceae_Sulfolobus_acidocaldarius@330779.Saci_2291",!color=#cc00cc]
+	'384616.Pisl_1438'[&FullName="Archaea_Crenarchaeota_Thermoprotei_Thermoproteaceae_Pyrobaculum_islandicum@384616.Pisl_1438"]
+	'387631.Asulf_01191'[&OUT="Outgroup",FullName="Archaea_Euryarchaeota_Archaeoglobi_Archaeoglobaceae_Archaeoglobus_sulfaticallidus@387631.Asulf_01191"]
+	'387631.Asulf_01432'[&FullName="Archaea_Euryarchaeota_Archaeoglobi_Archaeoglobaceae_Archaeoglobus_sulfaticallidus@387631.Asulf_01432"]
+	'399549.Msed_0397'[&FullName="Archaea_Crenarchaeota_Thermoprotei_Sulfolobaceae_Metallosphaera_sedula@399549.Msed_0397"]
+	'41673.NCBI|WP_110271516.1'[&FullName="Archaea_Crenarchaeota_Thermoprotei_Sulfolobaceae_Acidianus_brierleyi@41673.NCBI|WP_110271516.1"]
+	'41673.NCBI|WP_110271958.1'[&OUT="Outgroup",FullName="Archaea_Crenarchaeota_Thermoprotei_Sulfolobaceae_Acidianus_brierleyi@41673.NCBI|WP_110271958.1"]
+	'565033.GACE_0793'[&OUT="Outgroup",FullName="Archaea_Euryarchaeota_Archaeoglobi_Archaeoglobaceae_Geoglobus_acetivorans@565033.GACE_0793"]
+	'572478.Vdis_1965'[&OUT="Outgroup",FullName="Archaea_Crenarchaeota_Thermoprotei_Thermoproteaceae_Vulcanisaeta_distributa@572478.Vdis_1965"]
+	'589924.Ferp_1190'[&OUT="Outgroup",FullName="Archaea_Euryarchaeota_Archaeoglobi_Archaeoglobaceae_Ferroglobus_placidus@589924.Ferp_1190"]
+	'667138.NCBI|EQB66179.1'[&FullName="Archaea_Candidatus_Thermoplasmatota_Thermoplasmata_Thermoplasmatales_archaeon_I-plasma@667138.NCBI|EQB66179.1"]
+	'671065.MetMK1DRAFT_00016470'[&OUT="Outgroup",FullName="Archaea_Crenarchaeota_Thermoprotei_Sulfolobaceae_Metallosphaera_yellowstonensis@671065.MetMK1DRAFT_00016470"]
+	'698757.Pogu_1347'[&OUT="Outgroup",FullName="Archaea_Crenarchaeota_Thermoprotei_Thermoproteaceae_Pyrobaculum_oguniense@698757.Pogu_1347"]
+	'698757.Pogu_2671'[&OUT="Outgroup",FullName="Archaea_Crenarchaeota_Thermoprotei_Thermoproteaceae_Pyrobaculum_oguniense@698757.Pogu_2671"]
+;
+end;
+
+begin trees;
+	tree tree_1 = [&R] ('384616.Pisl_1438':0.32,((((((((((('330779.Saci_1120':0.23,'2823152.NCBI|BCU66874.1':0.45)[&TBE/NPboot="0.44/44"]:0.14,'273063.STK_00800':0.12)[&TBE/NPboot="0.36/15"]:0.05,('399549.Msed_0397':0.29,'41673.NCBI|WP_110271516.1':0.23)[&TBE/NPboot="0.39/39"]:0.07)[&TBE/NPboot="0.81/53"]:0.07,'330779.Saci_2210':0.38)[&TBE/NPboot="0.90/68"]:0.14,(((('387631.Asulf_01432':0.24,'2012529.NCBI|OYT34727.1':0.27)[&TBE/NPboot="1.00/100"]:0.42,((('1198449.ACAM_0607':0.26,('1056495.Calag_1039':0.22,'1872399.NCBI|HGQ49966.1':0.4)[&TBE/NPboot="0.64/64"]:0.08)[&TBE/NPboot="0.89/79"]:0.15,('2250273.NCBI|HIE36964.1':0.5,'2250273.NCBI|RLG62746.1':0.12)[&TBE/NPboot="0.81/81"]:0.14)[&TBE/NPboot="0.77/44"]:0.09,('1970083.NCBI|RUM46705.1':0.43,(('2056631.NCBI|HET80167.1':0.38,'1050719.NCBI|WP_018031329.1':0.38)[&TBE/NPboot="0.56/56"]:0.04,'2056631.NCBI|HHR65596.1':0.34)[&TBE/NPboot="0.84/74"]:0.16)[&TBE/NPboot="0.63/14"]:0.03)[&TBE/NPboot="0.69/21"]:0.04)[&TBE/NPboot="0.71/11"]:0.01,('2250277.NCBI|HEW93332.1':1.1,'2268198.NCBI|HEU16560.1':0.28)[&TBE/NPboot="0.16/16"]:0.09)[&TBE/NPboot="0.71/7",FullName="Archaea (13)",!collapse={"collapsed",2.1400000000000006}]:0.09,(((((((((((((((((((((('330779.Saci_2291':0.42,'41673.NCBI|WP_110271958.1':0.26)[&TBE/NPboot="0.49/49"]:0.11,'273057.SSO2626':0.13)[&TBE/NPboot="0.95/91"]:0.37,('1987491.NCBI|PVU74750.1':0.44,'312539.NCBI|WP_110381039.1':0.36)[&TBE/NPboot="0.48/48"]:0.09)[&TBE/NPboot="0.55/6"]:0.06,'273063.STK_24190':0.23)[&TBE/NPboot="0.50/15"]:0.12,('1006006.Mcup_1690':0.31,'671065.MetMK1DRAFT_00016470':0.21)[&TBE/NPboot="0.99/99"]:0.22)[&TBE/NPboot="0.79/13"]:0.12,'1540082.NCBI|WP_171714381.1':0.17)[&TBE/NPboot="0.92/38"]:0.27,'2823152.NCBI|BCU68136.1':0.57)[&TBE/NPboot="1.00/99"]:0.81,'698757.Pogu_2671':0.41)[&TBE/NPboot="0.92/17"]:0.06,('572478.Vdis_1965':0.17,('698757.Pogu_1347':0.45,'1714259.NCBI|KUO90454.1':0.52)[&TBE/NPboot="0.43/43"]:0.07)[&TBE/NPboot="0.81/70"]:0.19)[&TBE/NPboot="0.82/35"]:0.18,((('565033.GACE_0793':0.36,'1872626.NCBI|MBO8181906.1':0.41)[&TBE/NPboot="0.32/32"]:0.04,('589924.Ferp_1190':0.32,'2528703.NCBI|HID05104.1':0.52)[&TBE/NPboot="0.59/59"]:0.17)[&TBE/NPboot="0.71/56"]:0.05,(('387631.Asulf_01191':0.33,'2250258.NCBI|RLI81271.1':0.28)[&TBE/NPboot="0.59/59"]:0.1,('224325.AF_0437':0.21,'1872626.NCBI|HGJ08959.1':0.37)[&TBE/NPboot="0.61/61"]:0.08)[&TBE/NPboot="0.83/76"]:0.17)[&TBE/NPboot="1.00/100"]:0.9)[&TBE/NPboot="0.80/32"]:0.21,'2012530.NCBI|PCN50543.1':0.55)[&TBE/NPboot="0.81/20"]:0.07,('2026714.NCBI|HGL60895.1':0.45,'2026714.NCBI|MBE0511651.1':0.38)[&TBE/NPboot="0.62/62"]:0.11)[&TBE/NPboot="0.85/19"]:0.09,'2026714.NCBI|HHL04281.1':0.51)[&TBE/NPboot="0.89/69"]:0.37,((((((('1797286.NCBI|OFX16061.1':0.69,'1906665.NCBI|TSA43374.1':0.33)[&TBE/NPboot="0.42/42"]:0.13,'2026714.NCBI|RLG92439.1':0.59)[&TBE/NPboot="0.40/20"]:0.13,('2026714.NCBI|HGL60272.1':0.48,'2056630.NCBI|RLG54758.1':0.64)[&TBE/NPboot="0.34/34"]:0.11)[&TBE/NPboot="0.43/3"]:0.05,'2026714.NCBI|HGI37936.1':0.33)[&TBE/NPboot="0.43/3"]:0.07,('2056630.NCBI|RLG49748.1':0.22,('2026714.NCBI|MBC8223887.1':0.47,'1685127.NCBI|KON30937.1':0.26)[&TBE/NPboot="1.00/100"]:0.39)[&TBE/NPboot="0.70/40"]:0.13)[&TBE/NPboot="0.42/2"]:0.0,(('2268198.NCBI|HHN52910.1':0.5,'2035438.NCBI|GBC70762.1':0.28)[&TBE/NPboot="0.55/55"]:0.05,'2012509.NCBI|OYT50584.1':0.79)[&TBE/NPboot="0.54/38"]:0.1)[&TBE/NPboot="0.49/5"]:0.04,'2026714.NCBI|HDN02028.1':0.26)[&TBE/NPboot="0.50/1"]:0.0)[&TBE/NPboot="0.73/1"]:0.04,(('2026714.NCBI|HHI38953.1':0.54,'2026714.NCBI|RLI43407.1':0.25)[&TBE/NPboot="0.46/46"]:0.01,('2026714.NCBI|RLI27099.1':0.14,'2546571.NCBI|TDA36295.1':0.41)[&TBE/NPboot="0.88/88"]:0.11)[&TBE/NPboot="0.73/53"]:0.1)[&TBE/NPboot="0.83/8"]:0.15,((('2026795.NCBI|MBI3860020.1':0.31,'2026795.NCBI|MBI3022467.1':0.38)[&TBE/NPboot="0.97/97"]:0.31,'2830916.NCBI|MBS7288909.1':0.53)[&TBE/NPboot="0.78/57"]:0.15,('1927129.NCBI|WP_161490796.1':0.46,'1698279.NCBI|KXB04322.1':0.11)[&TBE/NPboot="1.00/100"]:0.9)[&TBE/NPboot="0.54/12"]:0.08)[&TBE/NPboot="0.87/2"]:0.05,('2026714.NCBI|HER54537.1':0.39,'2026714.NCBI|MBT8171336.1':0.47)[&TBE/NPboot="0.72/72"]:0.29)[&TBE/NPboot="0.91/10"]:0.1,('2026724.NCBI|HGE87377.1':0.47,'1980982.NCBI|PUA33004.1':0.61)[&TBE/NPboot="0.52/52"]:0.08)[&TBE/NPboot="0.94/7",FullName="Archaea (51) Bacteria (1)",!collapse={"collapsed",0.0}]:0.05,'2026795.NCBI|MBI2185375.1':0.68)[&TBE/NPboot="0.95/68"]:0.34,(('2268204.NCBI|MBD6955889.1':0.34,('667138.NCBI|EQB66179.1':0.52,'2026739.NCBI|HGE76880.1':0.2)[&TBE/NPboot="0.93/93"]:0.23)[&TBE/NPboot="0.77/53"]:0.15,'2026739.NCBI|HGD44669.1':0.64)[&TBE/NPboot="0.85/66"]:0.12)[&TBE/NPboot="0.89/15"]:0.08,('2268198.NCBI|HGY36011.1':0.71,'2026714.NCBI|HDM88115.1':0.46)[&TBE/NPboot="0.35/35"]:0.02)[&TBE/NPboot="0.87/16"]:0.11,('1978153.NCBI|PSN93724.1':0.47,'1978162.NCBI|PSN90673.1':0.52)[&TBE/NPboot="0.94/94"]:0.47)[&TBE/NPboot="0.85/6"]:0.04)[&TBE/NPboot="0.58/2"]:0.01)[&TBE/NPboot="0.62/0"]:0.02,(('2026714.NCBI|HGN40544.1':0.33,'2026714.NCBI|MBS7647835.1':0.27)[&TBE/NPboot="0.75/75"]:0.07,('2026714.NCBI|HGO11015.1':0.17,'2026714.NCBI|HGK14258.1':0.46)[&TBE/NPboot="0.33/33"]:0.12)[&TBE/NPboot="0.82/49",FullName="Bachyarchaeota (4)",!collapse={"collapsed",2.580000000000002}]:0.23)[&TBE/NPboot="0.70/15",FullName="Archaea (16)",!collapse={"collapsed",1.9000000000000017}]:0.04,(('273116.14324281':0.33,'273075.Ta0031':0.25)[&TBE/NPboot="0.98/98"]:0.62,'1670455.NCBI|WP_126450106.1':0.54)[&TBE/NPboot="0.87/75"]:0.34)[&TBE/NPboot="0.62/4"]:0.04,('2012532.NCBI|OYT67341.1':0.43,(('2268198.NCBI|HDD39982.1':0.49,('2268198.NCBI|HDD66470.1':0.11,'2268198.NCBI|HEP36495.1':0.61)[&TBE/NPboot="0.96/96"]:0.39)[&TBE/NPboot="0.72/48"]:0.0,'2268198.NCBI|HEP36496.1':0.28)[&TBE/NPboot="0.91/78"]:0.23)[&TBE/NPboot="0.91/70"]:0.18)[&TBE/NPboot="0.52/11"]:0.06,('311458.NCBI|BAJ50235.1':0.19,'2035437.NCBI|GBC69474.1':0.22)[&TBE/NPboot="1.00/100"]:0.43)[&TBE/NPboot="0.54/13"]:0.06,(('1104572.NCBI|WP_020267276.1':0.16,'1104572.NCBI|WP_020266713.1':0.49)[&TBE/NPboot="0.57/57"]:0.09,'2268198.NCBI|HGK50733.1':0.76)[&TBE/NPboot="0.52/26"]:0.12)[&TBE/NPboot="0.59/29"]:0.06,'1714261.NCBI|KUO91764.1':0.91)[&TBE/NPboot="0.64/64"]:0.14,'2268176.NCBI|HES72358.1':0.53);
+end;
+
+begin figtree;
+	set appearance.backgroundColorAttribute="Default";
+	set appearance.backgroundColour=#ffffff;
+	set appearance.branchColorAttribute="User selection";
+	set appearance.branchColorGradient=false;
+	set appearance.branchLineWidth=1.0;
+	set appearance.branchMinLineWidth=0.0;
+	set appearance.branchWidthAttribute="Fixed";
+	set appearance.foregroundColour=#000000;
+	set appearance.hilightingGradient=false;
+	set appearance.selectionColour=#2d3680;
+	set branchLabels.colorAttribute="User selection";
+	set branchLabels.displayAttribute="TBE/NPboot";
+	set branchLabels.fontName="sansserif";
+	set branchLabels.fontSize=10;
+	set branchLabels.fontStyle=0;
+	set branchLabels.isShown=true;
+	set branchLabels.significantDigits=4;
+	set layout.expansion=0;
+	set layout.layoutType="RECTILINEAR";
+	set layout.zoom=0;
+	set legend.attribute="TBE/NPboot";
+	set legend.fontSize=10.0;
+	set legend.isShown=false;
+	set legend.significantDigits=4;
+	set nodeBars.barWidth=4.0;
+	set nodeBars.displayAttribute=null;
+	set nodeBars.isShown=false;
+	set nodeLabels.colorAttribute="User selection";
+	set nodeLabels.displayAttribute="Node ages";
+	set nodeLabels.fontName="sansserif";
+	set nodeLabels.fontSize=8;
+	set nodeLabels.fontStyle=0;
+	set nodeLabels.isShown=false;
+	set nodeLabels.significantDigits=4;
+	set nodeShapeExternal.colourAttribute="User selection";
+	set nodeShapeExternal.isShown=false;
+	set nodeShapeExternal.minSize=10.0;
+	set nodeShapeExternal.scaleType=Width;
+	set nodeShapeExternal.shapeType=Circle;
+	set nodeShapeExternal.size=4.0;
+	set nodeShapeExternal.sizeAttribute="Fixed";
+	set nodeShapeInternal.colourAttribute="User selection";
+	set nodeShapeInternal.isShown=false;
+	set nodeShapeInternal.minSize=10.0;
+	set nodeShapeInternal.scaleType=Width;
+	set nodeShapeInternal.shapeType=Circle;
+	set nodeShapeInternal.size=4.0;
+	set nodeShapeInternal.sizeAttribute="Fixed";
+	set polarLayout.alignTipLabels=false;
+	set polarLayout.angularRange=0;
+	set polarLayout.rootAngle=0;
+	set polarLayout.rootLength=100;
+	set polarLayout.showRoot=true;
+	set radialLayout.spread=0.0;
+	set rectilinearLayout.alignTipLabels=false;
+	set rectilinearLayout.curvature=0;
+	set rectilinearLayout.rootLength=100;
+	set scale.offsetAge=0.0;
+	set scale.rootAge=1.0;
+	set scale.scaleFactor=1.0;
+	set scale.scaleRoot=false;
+	set scaleAxis.automaticScale=true;
+	set scaleAxis.fontSize=8.0;
+	set scaleAxis.isShown=false;
+	set scaleAxis.lineWidth=1.0;
+	set scaleAxis.majorTicks=1.0;
+	set scaleAxis.minorTicks=0.5;
+	set scaleAxis.origin=0.0;
+	set scaleAxis.reverseAxis=false;
+	set scaleAxis.showGrid=true;
+	set scaleBar.automaticScale=true;
+	set scaleBar.fontSize=10.0;
+	set scaleBar.isShown=true;
+	set scaleBar.lineWidth=1.0;
+	set scaleBar.scaleRange=0.0;
+	set tipLabels.colorAttribute="User selection";
+	set tipLabels.displayAttribute="FullName";
+	set tipLabels.fontName="Open Sans";
+	set tipLabels.fontSize=12;
+	set tipLabels.fontStyle=0;
+	set tipLabels.isShown=true;
+	set tipLabels.significantDigits=4;
+	set trees.order=true;
+	set trees.orderType="increasing";
+	set trees.rooting=true;
+	set trees.rootingType="User Selection";
+	set trees.transform=false;
+	set trees.transformType="cladogram";
+end;
+
