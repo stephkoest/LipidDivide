@@ -1,0 +1,222 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+This is an [R Markdown](http://rmarkdown.rstudio.com) Notebook. When you execute code within the notebook, the results appear beneath the code. 
+
+Try executing this chunk by clicking the *Run* button within the chunk or by placing your cursor inside it and pressing *Cmd+Shift+Enter*. 
+
+```{r}
+library(data.table)
+library(stringr)
+library(ggplot2)
+library(ggtree)
+library(ggpubr)
+theme_set(theme_pubr())
+
+readTaxTable <- function(infile, columns = c("TaxProtID", "Name")){
+  out.dt <- fread(infile, sep = "\t", header = F, col.names = columns)
+  return(out.dt)
+}
+##### Testing only
+Blast.tax.file <- "data/COG1028.80.trim.1.noLong.focalclade.homologs.trim.filter.names.txt"
+NOG <- "COG1028"
+NOG.tree.file <- "data/COG1028.80.trim.1.fasttree.noLong.tre"
+NOG.NR.tree.file <- "data/COG1028.80.trim.1.noLong.focalclade.homologs.trim.filter.noLong.fasttree.tre"
+NOG.NR.focal.tree.file <- "data/COG1028.80.trim.1.noLong.focalclade.homologs.selected.trim.1.fasttree.tre"
+target <- "330779.Saci_1104"
+#####
+makePhyPlot <- function(NOG, target, Blast.tax.file, NOG.tree.file, NOG.NR.tree.file, NOG.NR.focal.tree.file){
+  library(ggmosaic)
+  library(dplyr)
+  library(data.table)
+  library(stringr)
+  library(ggplot2)
+  library(ggtree)
+  library(ggpubr)
+  theme_set(theme_pubr())
+  #read in taxonomy data
+  All.tax.dt <- readTaxTable(Blast.tax.file)
+  All.tax.dt[,Origin:= "EggNOG"]
+  All.tax.dt[grep(Name, pattern = "NCBI\\|"),Origin:= "NCBI"]
+  All.tax.dt[, c("Taxonomy","ProtID") := data.table(str_split_fixed(Name,"@",2))]
+  All.tax.dt[, c("Domain","Phylum", "Class", "Family", "Genus", "Species") := data.table(str_split_fixed(Taxonomy,"_",6))]
+  All.tax.dt[, Species := paste(Genus, Species, sep = " ")]
+  setkey(All.tax.dt, "ProtID")
+  taxid <- unlist(strsplit(x = target, split = "\\."))[1]
+  #read eggnog tree
+  NOG.tree <- read.tree(NOG.tree.file)
+  print("Working on EggNOG tree.")
+  p1 <- ggtree(NOG.tree, layout="equal_angle")
+  p1$data$Domain <- All.tax.dt[p1$data$label]$Domain
+  p1 <- p1 +
+    geom_treescale() +
+    geom_tippoint(aes(color = Domain), size = 1, alpha= 0.7) +
+    scale_color_manual(breaks = c("Archaea", "Bacteria", "Eukaryota"), values = c("#fb9a99","#1f78b4", "#b2df8a")) +
+    geom_point2(aes(subset=(label %in% grep(p1$data$label, pattern = taxid, value = T))), fill ="#fb9a99", shape = 25, size =1.5 ) +
+    geom_point2(aes(subset=(label %in% target)), fill ="#fb9a99", shape = 25, size =3.5)
+  #read eggnog + NR tree
+  NOG.tree <- read.tree(NOG.NR.tree.file)
+  print("Working on EggNOG+NR tree.")
+  p2 <- ggtree(NOG.tree, layout="equal_angle")
+  p2$data$Domain <- All.tax.dt[p2$data$label]$Domain
+  p2$data$Domain[!p2$data$Domain %in% c("Archaea", "Bacteria", "Eukaryota")] <- NA
+  p2$data$Origin <- All.tax.dt[p2$data$label]$Origin
+  p2 <- p2 +
+    geom_treescale() +
+    geom_tippoint(aes(fill = Domain, alpha = Origin, color = Origin), size = 1, shape = 21) +
+    scale_fill_manual(breaks = c("Archaea", "Bacteria", "Eukaryota"), values = c("#fb9a99","#1f78b4", "#b2df8a")) +
+    scale_alpha_manual(breaks = c("NCBI", "EggNOG"), values = c(0.7,0.5)) +
+    scale_color_manual(breaks = c("NCBI", "EggNOG"), values = c("black",rgb(red = 255,green = 255,blue = 255,alpha = 0, maxColorValue = 255))) +
+    geom_point2(aes(subset=(label %in% grep(p2$data$label, pattern = taxid, value = T))), fill ="#fb9a99", shape = 25, size =1.5 ) +
+    geom_point2(aes(subset=(label %in% target)), fill ="#fb9a99", shape = 25, size =3.5)
+  #read in focal tree
+  NOG.tree <- read.tree(NOG.NR.focal.tree.file)
+  print("Working on Focal tree.")
+  p3 <- ggtree(NOG.tree, layout="equal_angle")
+  p3$data$Domain <- All.tax.dt[p3$data$label]$Domain
+  p3$data$Domain[!p3$data$Domain %in% c("Archaea", "Bacteria", "Eukaryota")] <- NA
+  p3$data$Origin <- All.tax.dt[p3$data$label]$Origin
+  p3 <- p3 +
+    geom_treescale() +
+    geom_tippoint(aes(fill = Domain, alpha = Origin, color = Origin), size = 1, shape = 21) +
+    scale_fill_manual(breaks = c("Archaea", "Bacteria", "Eukaryota"), values = c("#fb9a99","#1f78b4", "#b2df8a")) +
+    scale_alpha_manual(breaks = c("NCBI", "EggNOG"), values = c(0.7,0.5)) +
+    scale_color_manual(breaks = c("NCBI", "EggNOG"), values = c("black",rgb(red = 255,green = 255,blue = 255,alpha = 0, maxColorValue = 255))) +
+    geom_point2(aes(subset=(label %in% grep(p3$data$label, pattern = taxid, value = T))), fill ="#fb9a99", shape = 25, size =1.5 ) +
+    geom_point2(aes(subset=(label %in% target)), fill ="#fb9a99", shape = 25, size =3.5)
+  #prepare taxonomy data for plotting
+  Selection.tax.dt <- All.tax.dt[ProtID %in% p3$data$label]
+  Selection.tax.dt[,Set:= "Focal"]
+  All.tax.dt[,Set := "All"]
+  All.tax.dt <- rbind(All.tax.dt, Selection.tax.dt)
+  All.tax.count.dt<- All.tax.dt[Domain %in% c("Archaea", "Bacteria", "Eukaryota")] %>% count(Origin, Domain,Set)
+  Tax.p <- ggplot(All.tax.count.dt)+
+    geom_mosaic(aes(x = product(Origin), fill = Domain, weight = n))+
+    scale_fill_manual(breaks = c("Archaea", "Bacteria", "Eukaryota"), values = c("#fb9a99","#1f78b4", "#b2df8a")) +
+    facet_wrap(~Set) +
+    theme(legend.position = "none") +
+    ylab("")
+    
+  figure <- ggarrange(
+    p1,
+    p2,
+    p3 + 
+      theme(legend.position = "none"),
+    Tax.p,
+    ncol = 2,
+    nrow = 2,
+    labels = c(
+      paste("EggNOG n = ",format(length(unique(p1$data[p1$data$isTip == TRUE,]$label)),nsmall=0, big.mark=","), sep = "", collapse = ""),
+      paste("EggNOG + NCBI NR n = ",format(length(unique(p2$data[p2$data$isTip == TRUE,]$label)),nsmall=0, big.mark=","), sep = "", collapse = ""),
+      paste("Focal clade n = ",format(length(unique(p3$data[p3$data$isTip == TRUE,]$label)),nsmall=0, big.mark=","), sep = "", collapse = ""),
+      ""),
+    common.legend = TRUE,
+    legend = "bottom"
+    )
+  
+  ggsave(figure, filename = paste("results/",NOG,"_plot.pdf", sep = "", collapse = ""), device = "pdf", width = 12, height = 7)
+}
+
+
+NOG <- "COG1028"
+Blast.tax.file <- "data/COG1028.80.trim.1.noLong.focalclade.homologs.trim.filter.names.txt"
+NOG.NR.focal.treemmer.tree.file <- "../trees/COG1028.80.trim.1.noLong.focalclade.homologs.selected.pruned.combined.trim.40.support.tre"
+
+makeTaxPlot <- function(NOG, Blast.tax.file, NOG.NR.focal.treemmer.tree.file){
+  library(ggmosaic)
+  library(dplyr)
+  library(data.table)
+  library(stringr)
+  library(ggplot2)
+  library(ggtree)
+  library(ggpubr)
+  library(wordcloud2)
+  theme_set(theme_pubr())
+  #read in taxonomy data
+  All.tax.dt <- readTaxTable(Blast.tax.file)
+  All.tax.dt[,Origin:= "EggNOG"]
+  All.tax.dt[grep(Name, pattern = "NCBI\\|"),Origin:= "NCBI"]
+  All.tax.dt[, c("Taxonomy","ProtID") := data.table(str_split_fixed(Name,"@",2))]
+  All.tax.dt[, c("Domain","Phylum", "Class", "Family", "Genus", "Species") := data.table(str_split_fixed(Taxonomy,"_",6))]
+  All.tax.dt[, Species := paste(Genus, Species, sep = " ")]
+  setkey(All.tax.dt, "ProtID")
+  taxid <- unlist(strsplit(x = target, split = "\\."))[1]
+  #read eggnog tree
+  Focal.tree <- read.tree(NOG.NR.focal.treemmer.tree.file)
+  Selection.tax.dt <- All.tax.dt[ProtID %in% Focal.tree$tip.label]
+  Wordcloud.dt <- Selection.tax.dt[,.(Freq =.N), by= .(Phylum) ]
+  print(wordcloud2(Wordcloud.dt, shape ="triangle"))
+}
+```
+
+```{r run}
+
+
+
+#COG0183
+makePhyPlot(
+  NOG = "COG0183",
+  target = "330779.Saci_1114",
+  Blast.tax.file = "data/COG0183.80.trim.1.noLong.focalclade.homologs.trim.filter.names.txt",
+  NOG.tree.file = "data/COG0183.80.trim.1.fasttree.noLong.tre",
+  NOG.NR.tree.file = "data/COG0183.80.trim.1.noLong.focalclade.homologs.trim.filter.noLong.fasttree.tre",
+  NOG.NR.focal.tree.file = "data/COG0183.80.trim.1.noLong.focalclade.homologs.selected.trim.1.fasttree.tre"
+  )
+
+#COG1028
+makePhyPlot(
+  NOG = "COG1028",
+  target = "330779.Saci_1104",
+  Blast.tax.file = "data/COG1028.80.trim.1.noLong.focalclade.homologs.trim.filter.names.txt",
+  NOG.tree.file = "data/COG1028.80.trim.1.fasttree.noLong.tre",
+  NOG.NR.tree.file = "data/COG1028.80.trim.1.noLong.focalclade.homologs.trim.filter.noLong.fasttree.tre",
+  NOG.NR.focal.tree.file = "data/COG1028.80.trim.1.noLong.focalclade.homologs.selected.trim.1.fasttree.tre"
+  )
+
+#COG1064
+makePhyPlot(
+  NOG = "COG1064",
+  target = "330779.Saci_1115",
+  Blast.tax.file = "data/COG1064.80.trim.1.noLong.focalclade.homologs.trim.filter.names.txt",
+  NOG.tree.file = "data/COG1064.80.trim.1.fasttree.noLong.tre",
+  NOG.NR.tree.file = "data/COG1064.80.trim.1.noLong.focalclade.homologs.trim.filter.noLong.fasttree.tre",
+  NOG.NR.focal.tree.file = "data/COG1064.80.trim.1.noLong.focalclade.homologs.selected.trim.1.fasttree.tre"
+  )
+
+#COG2030
+makePhyPlot(
+  NOG = "COG2030",
+  target = "330779.Saci_1085",
+  Blast.tax.file = "data/COG2030.80.trim.1.noLong.focalclade.homologs.trim.filter.names.txt",
+  NOG.tree.file = "data/COG2030.80.trim.1.fasttree.noLong.tre",
+  NOG.NR.tree.file = "data/COG2030.80.trim.1.noLong.focalclade.homologs.trim.filter.noLong.fasttree.tre",
+  NOG.NR.focal.tree.file = "data/COG2030.80.trim.1.noLong.focalclade.homologs.selected.trim.1.fasttree.tre"
+  )
+
+makeTaxPlot(
+  NOG = "COG1028",
+  Blast.tax.file = "data/COG1028.80.trim.1.noLong.focalclade.homologs.trim.filter.names.txt",
+  NOG.NR.focal.treemmer.tree.file = "../trees/COG1028.80.trim.1.noLong.focalclade.homologs.selected.pruned.combined.trim.40.support.tre"
+  )
+
+makeTaxPlot(
+  NOG = "COG1064",
+  Blast.tax.file = "data/COG1064.80.trim.1.noLong.focalclade.homologs.trim.filter.names.txt",
+  NOG.NR.focal.treemmer.tree.file = "../trees/COG1064.80.trim.1.noLong.focalclade.homologs.selected.pruned.combined.trim.40.support.tre"
+  )
+
+makeTaxPlot(
+  NOG = "COG2030",
+  Blast.tax.file = "data/COG2030.80.trim.1.noLong.focalclade.homologs.trim.filter.names.txt",
+  NOG.NR.focal.treemmer.tree.file = "../trees/COG2030.80.trim.1.noLong.focalclade.homologs.selected.pruned.combined.trim.40.support.tre"
+  )
+
+makeTaxPlot(
+  NOG = "COG0183",
+  Blast.tax.file = "data/COG0183.80.trim.1.noLong.focalclade.homologs.trim.filter.names.txt",
+  NOG.NR.focal.treemmer.tree.file = "../trees/COG0183.80.trim.1.noLong.focalclade.homologs.selected.pruned.combined.trim.40.support.tre"
+  )
+
+```

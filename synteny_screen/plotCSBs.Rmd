@@ -1,0 +1,114 @@
+---
+title: "plotCSBs"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(data.table)
+library(ggplot2)
+```
+
+## R Markdown
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+
+```{r cars}
+CSBs.dt <- fread("results/archaea_CSBfinder_q2_ins3_cs_instances_FAS_single.tsv", sep = "\t", col.names =  c("CSB_ID", "Length", "Score", "Instance_Count", "CSB", "Family_ID", "Genome", "Locus"), header = F)
+Taxonomy.dt <- fread("data/ar122_taxonomy_r202_wide.tsv", header = F, col.names = c("Genome", "Domain", "Phylum", "Class", "Order", "Family", "Genus",  "Species"))
+Taxonomy.dt[,NperPhylum := .N, by =.(Phylum)]
+interestNOGs <- fread("data/SaciNOGs.txt", header = F)$V1
+CSBs.census.dt <- CSBs.dt[,.(CSB_ID, Length, Score, Instance_Count, CSB, Family_ID, Genome, Locus, COG0183= 0,COG1028 = 0, COG1064 =0,COG1250 = 0, COG1545 =0,COG2030 =0,COG1960 =0),]
+CSBs.census.dt[grep("COG0183@1", CSB, fixed = T), COG0183 :=1]
+CSBs.census.dt[grep("COG1028@1", CSB, fixed = T), COG1028 :=1]
+CSBs.census.dt[grep("COG1064@1", CSB, fixed = T), COG1064 :=1]
+CSBs.census.dt[grep("COG1960@1", CSB, fixed = T), COG1960 :=1]
+CSBs.census.dt[grep("COG1250@1", CSB, fixed = T), COG1250 :=1]
+CSBs.census.dt[grep("COG1545@1", CSB, fixed = T), COG1545 :=1]
+CSBs.census.dt[grep("COG2030@1", CSB, fixed = T), COG2030 :=1]
+CSBs.census.dt[,completeness:= (COG0183+COG1545+COG1028+COG1064+COG2030) / 5]
+CSBs.census.tax.dt<- merge(CSBs.census.dt, Taxonomy.dt, by = "Genome", all.x = T)
+```
+
+
+
+
+
+```{r ComplexSearch}
+
+Complex.CSBs.census.tax.Complex.dt <- unique(CSBs.census.tax.dt[COG1545 == 1][COG0183 ==1][,.( Length,CSB_ID,Family_ID),by = .(Genome, Species, Locus,Phylum, NperPhylum,CSB)])
+Complex.CSBs.census.tax.Complex.cons.dt <- unique(Complex.CSBs.census.tax.Complex.dt[,.(Conservation = ( .N/NperPhylum)*100),by=.(Family_ID,Phylum,CSB_ID,CSB, NperPhylum)])
+
+Complex.CSBFam.census.tax.Complex.dt <- unique(CSBs.census.tax.dt[COG1545 == 1][COG0183 ==1][,.( NperPhylum),by = .(Genome, Species, Phylum, Family_ID)])
+Complex.CSBFam.census.tax.Complex.cons.dt <- unique(Complex.CSBFam.census.tax.Complex.dt[,.(Conservation = ( .N/NperPhylum)*100),by=.(Family_ID,Phylum, NperPhylum)])
+
+Complex.CSBFam.census.tax.Complex.multi.dt <- Complex.CSBs.census.tax.Complex.dt[CSB_ID %in% unique(CSBs.census.tax.dt[COG1545 == 1][COG0183 ==1][Length == 2]$CSB_ID)][,.N,by = .(Genome, Species,Phylum, NperPhylum)][N>1]
+Complex.CSBFam.census.tax.Complex.any.dt <- Complex.CSBs.census.tax.Complex.dt[CSB_ID %in% unique(CSBs.census.tax.dt[COG1545 == 1][COG0183 ==1][Length == 2]$CSB_ID)][,.N,by = .(Genome, Species,Phylum, NperPhylum)][N>0]
+
+Complex.CSBFam.census.tax.Complex.any.cons.dt <- Complex.CSBFam.census.tax.Complex.any.dt[,.(Conservation = ( .N /NperPhylum)*100 ,averageCopy = mean(N)),by=.(Phylum,NperPhylum)]
+
+Complex.CSBFam.census.tax.Complex.multi.cons.dt <- Complex.CSBFam.census.tax.Complex.multi.dt[,.(Conservation = ( .N /NperPhylum)*100,averageCopy = mean(N)),by=.(Phylum,NperPhylum)]
+
+write.table(Complex.CSBs.census.tax.Complex.dt,file = "results/ComplexIslands.txt",sep = "\t",quote = F, row.names = F)
+#Complex.CSBs.census.tax.Complex.dt[CSB_ID %in% unique(CSBs.census.tax.dt[COG1545 == 1][COG0183 ==1][Length == 2]$CSB_ID)]
+```
+
+## Including Plots
+
+
+
+```{r pressure, echo=FALSE}
+ggplot(Complex.CSBFam.census.tax.Complex.cons.dt[Family_ID == 0],aes(Phylum, Conservation))+
+  geom_col() +
+  theme_light()+
+  theme(axis.text.x = element_text(angle = 90)) +
+  ylab("Conserved in genomes [%]") +
+  ggtitle("Genomes containing at least one ketothiolase/DUF35 domain protein pair per phylum")+
+  scale_y_continuous(limits = c(0,100))
+
+ggplot(Complex.CSBFam.census.tax.Complex.multi.cons.dt,aes(Phylum, Conservation))+
+  geom_col() +
+  theme_light()+
+  theme(axis.text.x = element_text(angle = 90)) +
+  ylab("Conserved in genomes [%]") +
+  #ggtitle("Genomes containing at least two ketothiolase/DUF35 domain protein pair per phylum")+
+  scale_y_continuous(limits = c(0,100))+
+  coord_flip()
+ggsave(filename = "results/KT_DUF35_muli_conservation.pdf",device = "pdf", width = 4,height = 2)
+
+ggplot(Complex.CSBFam.census.tax.Complex.any.dt[Phylum %in% c("p__Asgardarchaeota","p__Halobacteriota","p__Hadarchaeota", "p__Thermoplasmatota","p__Thermoproteota")],aes(Phylum, N))+
+  geom_jitter(shape =21,alpha = 0.4)+
+  geom_boxplot(outlier.alpha = 0,alpha = 0.9) +
+  theme_light()+
+  theme(axis.text.x = element_text(angle = 90)) +
+  ylab("Protein pairs per genome [n]") +
+  scale_y_continuous(limits = c(0,17))+
+  coord_flip()
+ggsave(filename = "results/KT_DUF35_copyN.pdf",device = "pdf", width = 4,height = 2)
+```
+
+```{r}
+FA.cluster.dt <- unique(CSBs.census.tax.dt[completeness >= 0.7][,.( Length,CSB_ID,Family_ID),by = .(Genome, Species, Locus, Phylum, NperPhylum,CSB)])
+
+FA.cluster.long.dt<- melt.data.table(CSBs.census.tax.dt[completeness >= 0.7,.(Genome, Species, Locus, Phylum,CSB_ID, Family_ID,COG0183,COG1028,COG1064,COG1250,COG1545,COG2030,COG1960)], id.vars = c("Genome","Species", "Locus", "Phylum", "CSB_ID","Family_ID"))
+FA.cluster.cons.dt <- unique(FA.cluster.dt[,.(Conservation = ( .N/NperPhylum)*100),by=.(Family_ID,Phylum,CSB_ID,CSB, NperPhylum,Locus)])
+
+
+ggplot(FA.cluster.cons.dt,aes(factor(Family_ID), Conservation))+
+  geom_col() +
+  facet_grid(rows = vars(Phylum), drop = T)+
+  theme_light()+
+  theme(strip.text.y = element_text(angle = 0)) +
+  ylab("Conserved in phylum genomes [%]")
+FA.cluster.long.comp.dt <- FA.cluster.long.dt[,.(N =sum(value)),by =.(Family_ID,variable)]
+n_loci <- length(unique(FA.cluster.cons.dt$Locus)) +1
+FA.cluster.long.comp.dt[,conservation := (N/n_loci)*100]
+ggplot(FA.cluster.long.dt[Family_ID == 0 & value > 0]) + 
+  geom_bar(aes(variable, fill = variable), position = position_dodge())
+
+ggplot(FA.cluster.long.comp.dt[Family_ID == 0])+
+  geom_col(aes(variable, conservation)) +
+  theme_light()
+```

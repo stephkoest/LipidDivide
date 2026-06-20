@@ -1,0 +1,133 @@
+---
+title: "Lipid Pathway Analysis"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(data.table)
+library(ggplot2)
+library(ggtree)
+```
+
+## Read in data
+
+
+```{r cars}
+Eggnog_map <- fread("results/archaea_sprep_proteome_emapper.LUCA.NOG.tsv", sep = "\t", header = F, col.names = c("Genome", "ProteinID","GenomeProteinID", "NOG"))
+Taxonomy <- fread("data/ar122_taxonomy_r202_wide.tsv", header = F, col.names = c("Genome", "Domain", "Phylum", "Class", "Order", "Family", "Genus",  "Species"))
+Interest.dt <- fread("data/targetCOGs.tsv")
+Eggnog_anno <- fread("results/archaea_sprep_proteome_emapper.emapper.annotations", sep = "\t")
+setnames(Eggnog_anno, "#query_name", "GenomeProteinID")
+Eggnog.map.anno <- merge(Eggnog_map, Eggnog_anno, by = "GenomeProteinID")
+Eggnog.map.anno.gene <- Eggnog.map.anno[Preferred_name != "-",.(.N), by =.(NOG,Preferred_name)]
+Eggnog.map.anno.gene[,sum := sum(N), by = .(NOG)]
+Eggnog.map.anno.gene[,GeneOcc := paste(Preferred_name, paste("(",round((N /sum) *100, digits = 0),")",sep=""), sep = " ")]
+Eggnog.map.anno.gene.perNOG <- Eggnog.map.anno.gene[,.(Gene_anno = paste(list(GeneOcc), sep = ";")), by = .(NOG)]
+Eggnog.map.anno.gene.perNOG[,Gene_anno := gsub('c\\(','', Gene_anno)]
+Eggnog.map.anno.gene.perNOG[,Gene_anno := gsub('"','', Gene_anno)]
+Eggnog.map.anno.gene.perNOG[,Gene_anno := gsub('\\)\\)$','\\)', Gene_anno)]
+Eggnog_map.tax <- merge(Eggnog.map.anno, Taxonomy, by = "Genome", all.x = T)
+Eggnog_map.tax[,Nphy := length(unique(Genome)), by = .(Phylum)]
+
+###### fix this part to use datatable 
+Archaea.phlipbio <- Eggnog_map.tax[NOG %in% unique(Interest.dt$COG)]
+#here the relative occurence calculation is performed
+Archaea.phlipbio[,NphyNOG := length(unique(Genome)),by = .(NOG, EC, Preferred_name, Phylum)]
+Archaea.phlipbio[, Rel := NphyNOG/Nphy  ]
+Archaea.phlipbio.rel <- unique(Archaea.phlipbio[,.(NOG, EC, Preferred_name, Phylum, Rel)])
+
+Archaea.phlipbio.rel.path <- merge(Archaea.phlipbio.rel, Interest.dt[,.(NOG= COG,Pathway)],allow.cartesian=TRUE ,by = "NOG", all.x = T)
+
+```
+
+## Including Plots
+
+You can also embed plots, for example:
+
+```{r pressure, echo=FALSE}
+#ggplot(Archaea.phlipbio.rel.path[EC %in% Phospholipid_biosynthesis[Phospholipid_biosynthesis != "-"]], aes(paste(EC, ", ",Preferred_name, sep = ""), Phylum)) +
+#  geom_point(aes(size = Rel), shape = 22, color = "white", fill = "grey") +
+#  geom_text(aes(label = round(Rel, digits = 1),size = Rel + 0.1), color ="black") +
+#  theme_light() +
+#  theme(axis.text.x = element_text(angle = 90)) +
+#  xlab("NOG, gene") +
+#  facet_grid( ~ NOG, scale = "free_x", space = "free_x") +
+#  ggtitle("Phospholipid biosynthesis") +
+#  labs(size = "Relative occurence") +
+#  theme(strip.text.x =  element_text(angle = 90), legend.position = "bottom")
+
+FAS_II.grep <- paste("\\b",paste(unique(Interest.dt[Pathway == "FAS_II" & EC != "-"]$EC),collapse="\\b|\\b"), "\\b", sep = "")
+FAS_II.gene.grep <- paste("\\b",paste(unique(Interest.dt[Pathway == "FAS_II" & EC == "-"]$gene),collapse="\\b|\\b"), "\\b", sep = "")
+
+FAS_II.archaea.dt <- rbind(
+  Archaea.phlipbio.rel[NOG %in% Interest.dt[Pathway == "FAS_II"]$COG][grep(FAS_II.grep, EC)] ,
+  Archaea.phlipbio.rel[NOG %in% Interest.dt[Pathway == "FAS_II"]$COG][grep(FAS_II.gene.grep, Preferred_name)]
+  )
+#[NOG =="COG0183"]
+ggplot(FAS_II.archaea.dt, aes(paste(EC, ", ",Preferred_name, sep = ""), Phylum)) +
+  geom_point(aes(size = Rel), shape = 22, color = "white", fill = "grey") +
+  geom_text(aes(label = round(Rel, digits = 1),size = Rel + 0.1), color ="black") +
+  theme_light() +
+  theme(axis.text.x = element_text(angle = 90)) +
+  xlab("EC, gene") +
+  facet_grid( ~ paste(NOG, EC,sep = " "), scale = "free", space = "free") +
+  ggtitle("FASII") +
+  labs(size = "Relative occurence") +
+  theme(strip.text.x =  element_text(angle = 90), legend.position = "bottom")
+```
+
+```{r trees}
+NOG_member_anno <- fread("results/NOG_member_emapper.emapper.annotations", sep = "\t")
+setnames(NOG_member_anno, "#query_name", "label")
+GTDB_taxonomy <- fread("data/ar122_taxonomy_r202_wide.tsv", header = F, col.names = c("label", "domain", "phylum", "class", "order", "family", "genus", "species"))
+out.dir <- "results/trees/"
+treefiles <- list.files(out.dir, pattern = "*.tre", full.names  = T)
+tree.file <- "COG2937.80_merge.trim.tre"
+
+plotAnnoTree <- function(tree.file,Eggnog_map.tax, NOG_member_anno, Interest.dt){
+  require(phytools)
+  tax.file <- gsub("tre\\b", "names", tree.file)
+  out.file.png <- gsub("tre\\b", "png", tree.file)
+  out.file.svg <- gsub("tre\\b", "svg", tree.file)
+  NOG = gsub("\\..*", "", basename(tree.file))
+  tree <- midpoint.root(read.tree(tree.file))
+  Taxonomy <- fread(tax.file, header = F, col.names = c("label", "taxonomy"))
+  setkey(Taxonomy, "label")
+  Taxonomy[, phylum := gsub("_.*","", taxonomy)]
+  tree.nodes <- data.table(label=tree$tip.label)
+  tree.anno<- merge(tree.nodes, Taxonomy[,.(label, phylum)], all.x = T, by = "label")
+  tree.anno[is.na(phylum)]$phylum <- "Archaea"
+  tree.anno <- merge(
+    tree.anno, rbind(
+    Eggnog_map.tax[,.(label = GenomeProteinID, gene = Preferred_name,EC)],
+    NOG_member_anno[,.(label, gene = Preferred_name, EC)]),
+    by = "label",
+    all.x = T
+    )
+  tree.anno[,target := "other"]
+  tree.anno[EC %in% Interest.dt[COG == NOG]$EC, target := gene]
+  tree.anno[EC == "-"][gene %in% Interest.dt[COG == NOG]$gene, target := gene]
+  tree.anno[,plot := TRUE]
+  tree.anno[target == "other", plot := FALSE]
+  
+  tp <- ggtree(tree) #way faster than layout="equal_angle"
+  
+  tp.plot <- tp %<+% tree.anno +
+    geom_tippoint(aes(fill = phylum, subset=!plot), alpha = 0.2,  shape =21) +
+    geom_tippoint(aes(fill = phylum, subset=plot), color = "black", size = 2,  shape =21) +
+    scale_fill_manual(breaks = c("Archaea",  "Eukaryota"), values = c("#fb9a99","#1f78b4", "#b2df8a")) +
+    ggtitle(NOG) +
+    theme(legend.position = "bottom")
+  print(paste("plotting", out.file.svg, sep = " "))
+  
+
+  ggsave(filename = out.file.svg, plot = tp.plot, device = "svg", width = 1064, height = 1064, units = "px")
+  ggsave(filename = out.file.png, plot = tp.plot, device = "png", width = 1064, height = 1064, units = "px")  
+}
+
+for (treef in treefiles) {
+  plotAnnoTree(tree.file = treef,Eggnog_map.tax = Eggnog_map.tax, NOG_member_anno = NOG_member_anno, Interest.dt = Interest.dt)
+} 
+plotAnnoTree(tree.file = "results/trees/COG1960.80_merge.trim.tre",Eggnog_map.tax = Eggnog_map.tax, NOG_member_anno = NOG_member_anno, Interest.dt = Interest.dt)
+```
