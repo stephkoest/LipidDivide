@@ -20,8 +20,6 @@ FA-synthesis genes (e.g. Fig. 5C).
 
 - `archaea_CSBfinder_q2_ins3_cs_instances_FAS_single.tsv.gz` — curated FA-synthesis syntenic-block
   instances from the published CSBfinder-S run (`-q 2 -s 3`), one row per block instance. gzip.
-- `GToTree/` — GToTree species trees giving clade context for the gene trees (`Archaea.tre`,
-  `Ectothiorhodospirales.tre`, `Ectothiorhodospiraceae.tre`) plus `GTDB-version-info.txt`.
 
 ## Not included (regenerable)
 

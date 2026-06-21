@@ -2,9 +2,12 @@
 
 Code, configuration, and key results for the comparative-genomics / phylogenetics part of:
 
-> Schmerling, Zhou, Görs, Köstlbacher, Kessenbrock, Podlesainski, Sybers, Wang, Lindås,
-> Snoep, Peeters, Kaiser, Ettema, Meckelmann, Bräsen & Siebers.
+> Christian Schmerling†, Xiaoxiao Zhou†, Paul E. Görs, Stephan Köstlbacher, Till Kessenbrock,
+> David Podlesainski, David Sybers, Kun Wang, Ann-Christin Lindås, Jacky L. Snoep, Eveline Peeters,
+> Markus Kaiser, Thijs J.G. Ettema, Sven W. Meckelmann, Christopher Bräsen* & Bettina Siebers.
 > **"De novo synthesis of fatty acids in Archaea via an archaeal fatty acid synthase complex."**
+>
+> († equal contribution; * corresponding author)
 
 The study shows that *Sulfolobus acidocaldarius* (and *Haloferax volcanii*) synthesise fatty acids
 de novo via a novel, ACP-independent pathway built around a ketothiolase (KT) / DUF35 complex, and that
@@ -23,7 +26,7 @@ data live with the manuscript and on FAIRDOMHub (see *Data availability* below).
 | [`tree_refinement/`](tree_refinement/) | Manual round-2/3 refinement of the gene trees: exhaustive MSA, TreeShrink + RogueNaRok pruning, IQ-TREE PMSF, non-parametric & transfer-bootstrap (TBE) support. | Fig. 5, figs. S33–S37 |
 | [`final_trees/`](final_trees/) | The **final published gene trees** (7 genes), with PMSF ML trees, combined NP-bootstrap + TBE support, outgroup definitions, tip-name maps, alignments, and iTOL annotation. | Fig. 2, Fig. 5, figs. S33–S37 |
 | [`taxonomic_distribution/`](taxonomic_distribution/) | R notebook plotting the taxonomic distribution of each gene tree (domain/origin-coloured ggtree). | Fig. 5, distribution panels |
-| [`synteny_screen/`](synteny_screen/) | Gene-neighbourhood / syntenic-block screen across GTDB archaea (eggNOG-mapper → CSBfinder-S `-q 2 -s 3`) + GToTree species-tree context. | KT/DUF35 conservation (Fig. 5C) |
+| [`synteny_screen/`](synteny_screen/) | Gene-neighbourhood / syntenic-block screen across GTDB archaea (eggNOG-mapper → CSBfinder-S `-q 2 -s 3`). | KT/DUF35 conservation (Fig. 5C) |
 
 ## The seven gene trees
 
@@ -74,8 +77,6 @@ the working directory):
 | InterProScan | (Pfam) | domain annotation |
 | ETE3 | 3.1.2 | tree plotting |
 | CSBfinder-S | (`-q 2 -s 3`) | colinear syntenic blocks |
-| GToTree | — | species-tree context |
-| ColabFold / CombFold | 2.3.4 | multimer modelling |
 | R / ggplot2 | 4.2.1 / 3.4.3 | plotting |
 | FigTree | 1.4.4 | tree visualisation |
 
@@ -98,8 +99,8 @@ the working directory):
 
 ## Data availability
 
-- **Included here:** all analysis code/config, the final gene trees + alignments + support, the curated
-  syntenic-block result, and GToTree species trees.
+- **Included here:** all analysis code/config, the final gene trees + alignments + support, and the curated
+  syntenic-block result.
 - **Not included (size / public sources):** NCBI nr & EggNOG/GTDB databases, conda environments, software
   binaries, and bulk intermediates (eggNOG-mapper annotations, per-aligner alignments, bootstrap-tree
   collections). These are regenerable with the scripts above or available from the public databases.
