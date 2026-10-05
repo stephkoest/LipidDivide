@@ -18,6 +18,9 @@ When you click the **Knit** button a document will be generated that includes bo
 ```{r cars}
 CSBs.dt <- fread("results/archaea_CSBfinder_q2_ins3_cs_instances_FAS_single.tsv", sep = "\t", col.names =  c("CSB_ID", "Length", "Score", "Instance_Count", "CSB", "Family_ID", "Genome", "Locus"), header = F)
 Taxonomy.dt <- fread("data/ar122_taxonomy_r202_wide.tsv", header = F, col.names = c("Genome", "Domain", "Phylum", "Class", "Order", "Family", "Genus",  "Species"))
+# Restrict to the 2,339 GTDB r202 species representatives that were screened, so that per-phylum
+# percentages use the same genome set as the CSB counts (the full ar122 table also lists non-representatives).
+Taxonomy.dt <- Taxonomy.dt[Genome %in% fread("gtdb_r202_archaea_species_reps.txt", header = F)$V1]
 Taxonomy.dt[,NperPhylum := .N, by =.(Phylum)]
 interestNOGs <- fread("data/SaciNOGs.txt", header = F)$V1
 CSBs.census.dt <- CSBs.dt[,.(CSB_ID, Length, Score, Instance_Count, CSB, Family_ID, Genome, Locus, COG0183= 0,COG1028 = 0, COG1064 =0,COG1250 = 0, COG1545 =0,COG2030 =0,COG1960 =0),]

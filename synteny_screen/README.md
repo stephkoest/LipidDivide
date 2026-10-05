@@ -21,6 +21,15 @@ FA-synthesis genes (e.g. Fig. 5C).
 - `archaea_CSBfinder_q2_ins3_cs_instances_FAS_single.tsv.gz` — curated FA-synthesis syntenic-block
   instances from the published CSBfinder-S run (`-q 2 -s 3`), one row per block instance. gzip.
 
+## Fig. 5C denominator (corrected)
+
+`plotCSBs.Rmd` originally took the number of genomes per phylum from the full GTDB r202 archaeal taxonomy
+(4,316 genomes, including non-representatives), while the KT/DUF35 pairs were counted only in the 2,339
+species representatives (`gtdb_r202_archaea_species_reps.txt`). The notebook now restricts the denominator to
+those representatives. Genomes with more than one KT/DUF35 pair, corrected (previously published value in brackets):
+Asgardarchaeota 72 %, 42 of 58 genomes [68 %]; Halobacteriota 38 % [20 %]; Thermoproteota 23 % [13 %];
+Hadarchaeota 15 % [12 %]; Thermoplasmatota 6 % [3 %]. The pairs-per-genome panel is unaffected.
+
 ## Per-lineage component counts (`lineage_counts/`)
 
 `count_fas_components.py` counts, per GTDB r202 lineage, the genomes carrying each S. acidocaldarius
