@@ -14,7 +14,8 @@ FA-synthesis genes (e.g. Fig. 5C).
    `prepSyntenyInput.sh`, `bin/makeCOGCSBinput.sh`, `runCSBfinderS.sh`.
 4. **Parse / focus on FA genes** — `parseCSB.sh`, `extractComplexIsland.sh`, `calcComplexSubtree.sh`,
    `bin/grepCOG.sh`, `bin/grepArCOG.sh`, `bin/grepWhile.sh`, `mapKEGG.sh`, `runTaxonomy.sh`.
-5. **Plots** — `plotCSBs.Rmd`, `lipidEggnog.Rmd` (R 4.2.1 + ggplot2 3.4.3).
+5. **Plots** — `plotCSBs.Rmd`, `lipidEggnog.Rmd` (R 4.2.1 + ggplot2 3.4.3; environment in `r_env.yaml`).
+   `plotCSBs.Rmd` writes the corrected Fig. 5C conservation panel to `results/Fig5C_conservation_corrected.pdf`.
 
 ## Included results
 

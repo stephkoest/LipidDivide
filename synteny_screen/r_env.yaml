@@ -1,0 +1,10 @@
+# R environment for plotCSBs.Rmd / lipidEggnog.Rmd (versions as in the manuscript)
+# micromamba create -n lipiddivide-r -f r_env.yaml
+name: lipiddivide-r
+channels:
+  - conda-forge
+dependencies:
+  - r-base=4.2.1
+  - r-ggplot2=3.4.3
+  - r-data.table
+  - r-knitr

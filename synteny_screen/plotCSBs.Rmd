@@ -81,6 +81,14 @@ ggplot(Complex.CSBFam.census.tax.Complex.multi.cons.dt,aes(Phylum, Conservation)
   coord_flip()
 ggsave(filename = "results/KT_DUF35_muli_conservation.pdf",device = "pdf", width = 4,height = 2)
 
+# Fig. 5C right panel in publication style (phylum prefixes stripped, no axis title on phyla)
+Fig5C.dt <- copy(Complex.CSBFam.census.tax.Complex.multi.cons.dt)[, Phylum := sub("^p__", "", Phylum)]
+Fig5C.p <- ggplot(Fig5C.dt, aes(Phylum, Conservation)) + geom_col() + theme_light() +
+  ylab("Conserved in genomes [%]") + xlab(NULL) +
+  scale_y_continuous(limits = c(0, 100), breaks = seq(0, 100, 25)) + coord_flip() +
+  theme(plot.margin = margin(5, 12, 5, 5))
+ggsave(filename = "results/Fig5C_conservation_corrected.pdf", Fig5C.p, width = 3.6, height = 2)
+
 ggplot(Complex.CSBFam.census.tax.Complex.any.dt[Phylum %in% c("p__Asgardarchaeota","p__Halobacteriota","p__Hadarchaeota", "p__Thermoplasmatota","p__Thermoproteota")],aes(Phylum, N))+
   geom_jitter(shape =21,alpha = 0.4)+
   geom_boxplot(outlier.alpha = 0,alpha = 0.9) +
