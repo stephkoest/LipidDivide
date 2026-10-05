@@ -1,6 +1,6 @@
 # Final gene trees
 
-The published maximum-likelihood phylogenies for the seven target genes (Fig. 2, Fig. 5, figs. S33–S37).
+The published maximum-likelihood phylogenies for the seven target genes (Fig. 5, figs. S35–S38; the two β-oxidation trees are supporting analyses).
 One sub-directory per gene, named `<COG>_<protein>`:
 
 | Directory | Gene | Pathway | Final round |
@@ -34,4 +34,4 @@ Templates and the driver script used to style the trees in iTOL for the figures:
 `annotate_tree_Itol.sh`, `color_styles_template.txt`, `labels_template.txt`. The per-tip colour and
 relabelling tables are derivable from each gene's `_names.tsv.gz` and `_outgroup.tsv`.
 
-> See the top-level [`README.md`](../README.md) for the COG0183 seed caveat (Saci_1121 vs Saci_1114).
+> COG0183 is seeded on the FA-synthesis KT Saci_1121 (fig. S35); see the top-level [`README.md`](../README.md) for the Saci_1121 vs Saci_1114 note.
