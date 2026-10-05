@@ -68,7 +68,7 @@ the working directory):
 | BLAST+ | (`blastdbcmd`) | nr taxonomy lookup |
 | FastTree | 2.1.11 | preliminary trees |
 | **IQ-TREE** | **1.6.9** (initial ML, Snakemake) / **2.1.2 COVID-edition** (PMSF + NP-bootstrap, refinement) | ML phylogenies |
-| ModelFinder | (in IQ-TREE) | substitution-model selection (best fit `LG+C60+F+R…`) |
+| ModelFinder | (in IQ-TREE) | substitution-model selection (best fit `LG+C60+F+R6`; `LG+C40+F+R5` for COG1545) |
 | TreeShrink | 1.3.7 | long-branch outlier removal (q = 0.01) |
 | RogueNaRok | (bundled) | rogue-taxon removal |
 | RAxML-NG | 0.9.0 | transfer-bootstrap expectation support |
@@ -82,7 +82,7 @@ the working directory):
 
 > ℹ️ **Version note:** IQ-TREE 1.6.9 was used inside the Snakemake workflow; the final PMSF +
 > non-parametric-bootstrap trees in `final_trees/` were produced with **IQ-TREE 2.1.2 (COVID-edition)**
-> (`.iqtree` reports give model `LG+SSF+F+R5/R6`, i.e. the PMSF profile with 5 or 6 FreeRate categories).
+> (`.iqtree` reports give `LG+SSF+F+R6`, or `LG+SSF+F+R5` for COG1545, i.e. the PMSF profile with 6 or 5 FreeRate categories).
 
 ## Reproducing the analyses (overview)
 

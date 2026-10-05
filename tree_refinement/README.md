@@ -24,5 +24,6 @@ IQ-TREE **2.1.2** (COVID-edition), RAxML-NG, TreeShrink 1.3.7, RogueNaRok, MAFFT
 Clustal Omega 1.2.3, T-Coffee 13.45.0, trimAl 1.4.1. (RogueNaRok was run from the bundled binary in the
 original working directory; install from its upstream repository.)
 
-> The best-fit model was `LG+C60+F+R…`; the PMSF `.iqtree` reports show it as `LG+SSF+F+R5/R6`
-> (SSF = the site-specific frequency profile derived from C60).
+> Best-fit models (BIC): `LG+C60+F+R6` for the gene trees, except COG1545/DUF35, for which `LG+C40+F+R5`
+> was selected. The PMSF `.iqtree` reports show these as `LG+SSF+F+R6` / `LG+SSF+F+R5` (SSF = the
+> site-specific frequency profile derived from the C-mixture model).
