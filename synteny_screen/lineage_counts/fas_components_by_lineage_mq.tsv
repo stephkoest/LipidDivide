@@ -1,0 +1,58 @@
+phylum	class	order	n_genomes	% KT/DUF35 pair	% KCR	% MaoC-HCD	% ECR	% complete set
+Halobacteriota	Halobacteria		370	0	100	89	89	0
+Thermoplasmatota	Poseidoniia_A		245	0	9	0	0	0
+Thermoproteota	Nitrososphaeria		211	12	94	5	86	1
+Nanoarchaeota	Nanoarchaeia		183	0	3	0	1	0
+Thermoplasmatota	Thermoplasmata		150	5	41	6	23	1
+Thermoproteota	Bathyarchaeia		127	19	35	2	5	0
+Methanobacteriota	Methanobacteria		126	0	61	0	5	0
+Halobacteriota	Methanosarcinia		124	0	48	0	8	0
+Halobacteriota	Methanomicrobia		110	0	62	0	0	0
+Thermoproteota	Thermoproteia	Sulfolobales	102	34	79	22	74	22
+Methanobacteriota	Thermococci		72	0	81	1	0	0
+Micrarchaeota	Micrarchaeia		59	0	10	0	0	0
+Thermoproteota	Thermoproteia	Thermoproteales	39	72	87	46	87	44
+Halobacteriota	Archaeoglobi		32	72	44	50	0	0
+Thermoplasmatota	E2		29	0	38	0	0	0
+Thermoproteota	Methanomethylicia		28	14	25	7	14	0
+Iainarchaeota	Iainarchaeia		27	0	4	0	0	0
+Asgardarchaeota	Lokiarchaeia		25	0	40	0	4	0
+Asgardarchaeota	Thorarchaeia		21	5	38	0	0	0
+Thermoproteota	Thermoproteia	Thermofilales	21	0	52	0	38	0
+Methanobacteriota	Methanococci		21	0	0	0	0	0
+Halobacteriota	Syntropharchaeia		19	0	0	0	0	0
+Aenigmatarchaeota	Aenigmatarchaeia		18	0	17	0	0	0
+Thermoplasmatota	Poseidoniia_B		18	0	39	0	0	0
+Altarchaeota	Altarchaeia		16	0	6	0	0	0
+Nanohaloarchaeota	Nanosalinia		14	0	57	0	7	0
+Hadarchaeota	Hadarchaeia		12	0	0	0	8	0
+Asgardarchaeota	Heimdallarchaeia		9	0	11	0	0	0
+Hydrothermarchaeota	Hydrothermarchaeia		9	0	11	0	0	0
+Thermoproteota	Korarchaeia		9	33	78	11	11	0
+Thermoproteota	EX4484-205		8	0	12	0	12	0
+EX4484-52	EX4484-52		8	0	0	0	0	0
+Halobacteriota	Methanocellia		6	0	0	0	0	0
+PWEA01	PWEA01		6	0	33	0	0	0
+Halobacteriota	Methanoliparia		5	0	0	0	0	0
+Undinarchaeota	Undinarchaeia		5	0	0	0	0	0
+Thermoproteota	Thermoproteia	Marsarchaeales	5	40	80	60	0	0
+Aenigmatarchaeota_A	Aenigmatarchaeia_A		5	0	40	0	0	0
+Halobacteriota	Bog-38		4	0	100	0	0	0
+Halobacteriota	Methanonatronarchaeia		4	25	0	0	0	0
+Thermoproteota	Thermoproteia	Gearchaeales	3	100	100	33	100	33
+Thermoplasmatota	UBA186		3	0	0	0	0	0
+Methanobacteriota	Methanopyri		3	0	0	0	0	0
+Thermoplasmatota	JABDBI01		3	0	0	0	0	0
+Halobacteriota	Methanosarcinia_A		3	0	0	0	0	0
+QMZS01	QMZS01		2	0	0	0	0	0
+Thermoplasmatota	B47-G6		2	0	50	0	0	0
+Thermoplasmatota	EX4484-6		2	0	100	0	0	0
+Thermoproteota	Thermoproteia	QMSL01	2	0	50	0	0	0
+Asgardarchaeota	DTBI01		2	100	100	0	0	0
+Thermoproteota	Thermoproteia	EX4484-217-1	2	0	50	0	0	0
+Thermoplasmatota	SW-10-69-26		2	0	100	100	0	0
+Huberarchaeota	Huberarchaeia		1	0	0	0	0	0
+SpSt-1190	SpSt-1190		1	0	0	0	0	0
+Thermoproteota	QMWL01		1	0	0	0	0	0
+Asgardarchaeota	Lokiarchaeia_A		1	0	0	0	0	0
+Hadarchaeota	B88-G9		1	0	0	0	0	0

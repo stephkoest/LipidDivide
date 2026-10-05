@@ -1,0 +1,42 @@
+phylum	class	order	n_genomes	% KT/DUF35 pair	% KCR	% MaoC-HCD	% ECR	% complete set
+Halobacteriota	Halobacteria		302	0	100	91	91	0
+Thermoproteota	Nitrososphaeria		123	14	95	5	88	2
+Halobacteriota	Methanosarcinia		93	0	55	0	10	0
+Methanobacteriota	Methanobacteria		91	0	57	0	5	0
+Thermoplasmatota	Thermoplasmata		85	8	42	6	25	0
+Halobacteriota	Methanomicrobia		78	0	62	0	0	0
+Thermoproteota	Thermoproteia	Sulfolobales	70	44	86	31	84	31
+Methanobacteriota	Thermococci		56	0	89	0	0	0
+Thermoproteota	Bathyarchaeia		46	26	24	2	7	0
+Thermoproteota	Thermoproteia	Thermoproteales	29	76	93	45	93	45
+Halobacteriota	Archaeoglobi		24	79	54	58	0	0
+Methanobacteriota	Methanococci		20	0	0	0	0	0
+Micrarchaeota	Micrarchaeia		17	0	12	0	0	0
+Thermoproteota	Methanomethylicia		14	21	36	7	7	0
+Thermoproteota	Thermoproteia	Thermofilales	8	0	88	0	38	0
+Asgardarchaeota	Thorarchaeia		7	14	43	0	0	0
+Thermoplasmatota	E2		6	0	67	0	0	0
+Halobacteriota	Methanocellia		5	0	0	0	0	0
+Thermoproteota	Korarchaeia		5	20	80	20	20	0
+Hydrothermarchaeota	Hydrothermarchaeia		5	0	20	0	0	0
+Halobacteriota	Methanonatronarchaeia		4	25	0	0	0	0
+Thermoproteota	Thermoproteia	Marsarchaeales	3	67	100	100	0	0
+Halobacteriota	Syntropharchaeia		3	0	0	0	0	0
+Methanobacteriota	Methanopyri		3	0	0	0	0	0
+Halobacteriota	Bog-38		3	0	100	0	0	0
+Asgardarchaeota	Lokiarchaeia		3	0	67	0	0	0
+Hadarchaeota	Hadarchaeia		3	0	0	0	33	0
+Thermoproteota	EX4484-205		2	0	0	0	0	0
+Altarchaeota	Altarchaeia		2	0	0	0	0	0
+Iainarchaeota	Iainarchaeia		2	0	0	0	0	0
+Halobacteriota	Methanosarcinia_A		2	0	0	0	0	0
+Halobacteriota	Methanoliparia		2	0	0	0	0	0
+Asgardarchaeota	Heimdallarchaeia		2	0	0	0	0	0
+Thermoproteota	Thermoproteia	QMSL01	1	0	0	0	0	0
+Asgardarchaeota	DTBI01		1	100	100	0	0	0
+Thermoproteota	Thermoproteia	EX4484-217-1	1	0	100	0	0	0
+Thermoplasmatota	JABDBI01		1	0	0	0	0	0
+Thermoplasmatota	UBA186		1	0	0	0	0	0
+Undinarchaeota	Undinarchaeia		1	0	0	0	0	0
+Asgardarchaeota	Lokiarchaeia_A		1	0	0	0	0	0
+Thermoplasmatota	SW-10-69-26		1	0	100	100	0	0
